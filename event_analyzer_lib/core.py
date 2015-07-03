@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
+
 from dao.config import *
 from dao.model import *
-from dataset import Dataset
+from algo.datasets import Dataset
 import datetime
+import logging
+
+logger = logging.getLogger('logentries')
 
 def rebuildEvent(
         event_type,
@@ -12,7 +17,7 @@ def rebuildEvent(
     events = getEventInfo()
     # Validation of existance of the event
     if event_type not in events:
-        print "There is no event named %s in Config Class" % event_type
+        logger.debug("There is no event named %s in Config Class" % event_type)
         return None
 
     # Get Model's init params.
@@ -20,9 +25,9 @@ def rebuildEvent(
     # # Get Sets of all kinds of status classification.
     sys_status_sets = getSystemStatusSets()
 
-    print "Event %s's params is %s" % (event_type, init_params)
-    print "And latest status classification are %s" % sys_status_sets
-    print "The generated model tag is %s" % new_tag
+    logger.debug("Event %s's params is %s" % (event_type, init_params))
+    logger.debug("And latest status classification are %s" % sys_status_sets)
+    logger.debug("The generated model tag is %s" % new_tag)
 
     now = datetime.datetime.now()
     description = "Initiation of A new %s Model for event %s was made at %s" % (algo_type, event_type, now)
@@ -44,6 +49,8 @@ def trainEventRandomly(
 
     d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
                 location_type=location_set, event_prob_map={})
+
+    # TODO: algo_type -> trainer 下某个训练器的map，这样会更灵活
     
 
 def predictEvent():

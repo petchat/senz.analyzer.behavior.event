@@ -2,7 +2,7 @@ __all__ = ["getSystemStatusSets", "getEventInfo", "getEventList"]
 
 from leancloud import Object
 from leancloud import Query
-from settings import *
+from settings import configList
 
 Config = Object.extend("Config")
 
