@@ -15,7 +15,7 @@ class Dataset(object):
     rawdata_type = ("motion", "location", "sound")
 
     # event_type  = ("shopping", "dining_out_in_chinese_restaurant", "work", "running_fitness")
-    event_type = ("shopping.mall", "dining.chineseRestaurant", "work.office", "fitness.running")
+    event_type = ("shopping#mall", "dining#chineseRestaurant", "work#office", "fitness#running")
 
     motion_type = ("sitting", "walking", "running", "riding", "driving")
 
@@ -55,28 +55,33 @@ class Dataset(object):
     }
 
     event_prob_map = {
-        "dining.chineseRestaurant": {
+        "dining#chineseRestaurant": {
             "motion": [{"sitting": 0.7}, {"walking": 0.3}],
             "sound": [{"talking": 0.4}, {"laugh": 0.3}, {"others": 0.15}, {"tableware": 0.1}, {"Others": 0.05}],
             "location": [{"chinese_restaurant": 0.7}, {"Others": 0.25}, {"residence": 0.05}]
         },
-        "fitness.running": {
+        "fitness#running": {
             "motion": [{"running": 0.4}, {"walking": 0.4}, {"sitting": 0.2}],
             "sound": [{"step": 0.2}, {"wind": 0.2}, {"others": 0.2}, {"car_driving_by": 0.2}, {"Others": 0.2}],
             "location": [{"scenic_spot": 0.3}, {"Others": 0.3}, {"residence": 0.2}, {"traffic": 0.2}]
         },
-        "work.office": {
+        "work#office": {
             "motion": [{"sitting": 0.85}, {"walking": 0.15}],
             "sound": [{"step": 0.2}, {"others": 0.2}, {"keyboard": 0.2}, {"mouse_click": 0.1}, {"turning_page": 0.1},
                       {"talking": 0.2}],
             "location": [{"work_office": 0.7}, {"home": 0.2}, {"Others": 0.1}]
         },
-        "shopping.mall": {
+        "shopping#mall": {
             "motion": [{"walking": 0.7}, {"sitting": 0.3}],
             "sound": [{"step": 0.2}, {"talking": 0.4}, {"car_driving_by": 0.1}, {"music": 0.2}, {"Others": 0.1}],
             "location": [{"comprehensive_market": 0.7}, {"chinese_restaurant": 0.2}, {"Others": 0.1}]
         }
     }
+
+    def __repr__(self):
+        return 'Dataset(event_type=%s,\n\tmotion_type=%s,\n\tsound_type=%s,\n\tlocation_type=%s,\n\tevent_prob_map=%s)' % (
+            self.event_type, self.motion_type, self.sound_type, self.location_type, self.event_prob_map
+        )
 
     def __init__(self, obs=None, rawdata_type=None, event_type=None, motion_type=None, sound_type=None,
                  location_type=None, event_prob_map=None):
@@ -265,8 +270,9 @@ class Dataset(object):
 
 if __name__ == "__main__":
     dataset = Dataset()
-    dataset.randomObservations("dining.chineseRestaurant", 10, 1)
+    dataset.randomObservations("dining#chineseRestaurant", 10, 1)
     print dataset.obs
     print dataset.getDataset()
+    print(dataset)
     # dataset.plotObservations3D()
 

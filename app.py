@@ -72,7 +72,8 @@ def rebuild_event():
       code: int
         0 success, 1 fail
       message: string
-      result: object, optional
+      result: dict, optional
+        model object id
     '''
     if request.headers.has_key('X-Request-Id') and request.headers['X-Request-Id']:
         x_request_id = request.headers['X-Request-Id']
@@ -101,9 +102,123 @@ def rebuild_event():
     tag = incoming_data['tag']
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
 
-    core.rebuildEvent(event_type, algo_type, tag)
+    model_id = core.rebuildEvent(event_type, algo_type, tag)
+    result['code'] = 0
+    result['message'] = 'success'
+    result['result'] = {'modelObjectId': model_id}
+
+    return json.dumps(result)
+
+
+@app.route('/trainRandomly/', methods=['POST'])
+def train_randomly():
+    '''init specify event_type & tag model
+
+    Parameters
+    ----------
+    data: JSON Obj
+      e.g. {"event_type":"shopping#mall", "tag":"init_model"}
+      event_type: string
+      tag: string
+      algo_type: string, optional, default "GMMHMM"
+
+    Returns
+    -------
+    result: JSON Obj
+      e.g. {"code":0, "message":"success", "result":""}
+      code: int
+        0 success, 1 fail
+      message: string
+      result: dict, optional
+        model object id
+    '''
+    if request.headers.has_key('X-Request-Id') and request.headers['X-Request-Id']:
+        x_request_id = request.headers['X-Request-Id']
+    else:
+        x_request_id = ''
+
+    logger.info('<%s>, [train randomly] enter' %(x_request_id))
+    result = {'code': 1, 'message': ''}
+
+    # params JSON validate
+    try:
+        incoming_data = json.loads(request.data)
+    except ValueError, err_msg:
+        logger.exception('<%s>, [tran randomly] [ValueError] err_msg: %s, params=%s' % (x_request_id, err_msg, request.data))
+        result['message'] = 'Unvalid params: NOT a JSON Object'
+        return json.dumps(result)
+
+    # params key checking
+    for key in ['event_type', 'tag']:
+        if key not in incoming_data:
+            logger.exception("<%s>, [rebuild event] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
+            result['message'] = "Params content Error: cant't find key=%s" % (key)
+            return json.dumps(result)
+
+    event_type = incoming_data['event_type']
+    tag = incoming_data['tag']
+    algo_type = incoming_data.get('algo_type', 'GMMHMM')
+
+    model_id = core.trainEventRandomly(event_type, tag, algo_type)
+    result['code'] = 0
+    result['message'] = 'success'
+    result['result'] = {'modelObjectId': model_id}
+
+    return json.dumps(result)
+
+@app.route('/predict/', methods=['POST'])
+def predict():
+    '''Predict seq belong to which event
+
+    Parameters
+    ----------
+    data: JSON obj
+      e.g. {
+            "seq" : [{"motion": "sitting", "sound": "tableware", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "talking", "location": "chinese_restaurant"}, {"motion": "walking", "sound": "talking", "location": "night_club"}, {"motion": "walking", "sound": "tableware", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "talking", "location": "night_club"}, {"motion": "sitting", "sound": "laugh", "location": "night_club"}, {"motion": "sitting", "sound": "talking", "location": "night_club"}, {"motion": "walking", "sound": "silence", "location": "chinese_restaurant"}, {"motion": "walking", "sound": "laugh", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "laugh", "location": "chinese_restaurant"}],
+            "tag":"init_model"
+           }
+      seq: list
+      tag: string
+      algo_type: string, optional, default "GMMHMM"
+
+    Returns
+    -------
+    result: JSON Obj
+      e.g. {"code":0, "message":"success", "result":{"shopping":0.7,"walking":0.3}}
+      code: int
+        0 success, 1 fail
+      message: string
+      result: dict
+    '''
+    if request.headers.has_key('X-Request-Id') and request.headers['X-Request-Id']:
+        x_request_id = request.headers['X-Request-Id']
+    else:
+        x_request_id = ''
+
+    logger.info('<%s>, [predict randomly] enter' %(x_request_id))
+    result = {'code': 1, 'message': ''}
+
+    # params JSON validate
+    try:
+        incoming_data = json.loads(request.data)
+    except ValueError, err_msg:
+        logger.exception('<%s>, [tran randomly] [ValueError] err_msg: %s, params=%s' % (x_request_id, err_msg, request.data))
+        result['message'] = 'Unvalid params: NOT a JSON Object'
+        return json.dumps(result)
+
+    # params key checking
+    for key in ['seq', 'tag']:
+        if key not in incoming_data:
+            logger.exception("<%s>, [rebuild event] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
+            result['message'] = "Params content Error: cant't find key=%s" % (key)
+            return json.dumps(result)
+
+    seq = incoming_data['seq']
+    tag = incoming_data['tag']
+    algo_type = incoming_data.get('algo_type', "GMMHMM")
+
+    result['result'] = core.predictEvent(seq, tag, algo_type)
     result['code'] = 0
     result['message'] = 'success'
 
     return json.dumps(result)
-

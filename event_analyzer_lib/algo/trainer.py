@@ -73,6 +73,7 @@ def trainingGMMHMM(
 
 class GMMHMMTrainer(object):
     '''A wrapper to GMMHMM
+
     Attributes
     ----------
     _model: init params
@@ -113,7 +114,7 @@ class GMMHMMTrainer(object):
                              transmat=transmat, transmat_prior=transmat_prior,
                              startprob=startprob, startprob_prior=startprob_prior)
         self.params_ = None
-        self.train_data_ = None
+        self.train_data_ = []
 
     def __repr__(self):
         return '<GMMHMMTrainer instance>\n\tinit_models:%s\n\tparams:%s\n\ttrain_data:%s' % (self._model,
@@ -191,38 +192,8 @@ if __name__ == '__main__':
                 0.1,
                 0.2
             ],
-            "startProbPrior": [
-                0.4,
-                0.3,
-                0.1,
-                0.2
-            ],
-            "transMatPrior": [
-                [
-                    0.2,
-                    0.1,
-                    0.3,
-                    0.4
-                ],
-                [
-                    0.3,
-                    0.2,
-                    0.2,
-                    0.3
-                ],
-                [
-                    0.1,
-                    0.1,
-                    0.1,
-                    0.7
-                ],
-                [
-                    0.1,
-                    0.3,
-                    0.4,
-                    0.2
-                ]
-            ]
+            "startProbPrior": 0.4,
+            "transMatPrior": 1.0,
         },
         "gmmParams": {
             "nMix": 4,

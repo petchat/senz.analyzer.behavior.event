@@ -57,6 +57,76 @@ def classifyByGMMHMM(seq, models, configs):
 
     return results
 
+class GMMHMMClassifer(object):
+    '''A wrapper to a set of GMMHMMs for predict
+
+    Attributes
+    ----------
+    _models: list of dict
+      init models params
+    gmmhmms: dict
+      keys are labels of GMMHMMs, values are dict {'gmmhmm': instance, 'status_set':status_set}
+    predict_data_: current predict_data
+    '''
+
+    def __init__(self, _models):
+        self._models = _models
+        self.gmmhmms = {}
+        self.predict_data_ = None
+
+        for label, value in _models.iteritems():
+            _model = value['param']
+            hmm_params = _model['hmmParams']
+            gmm_params = _model['gmmParams']
+            n_iter = _model.get('nIter', 50)
+
+            transmat = hmm_params['transMat']
+            transmat_prior = hmm_params['transMatPrior']
+            n_component = hmm_params['nComponent']
+            startprob = hmm_params['startProb']
+            startprob_prior = hmm_params['startProbPrior']
+
+            n_mix = gmm_params['nMix']
+            covariance_type = gmm_params['covarianceType']
+            gmms = gmm_params.get('gmms', None)
+
+            gmm_obj_list = []
+            if not gmms:
+                gmm_obj_list = None
+            else:
+                for gmm in gmms:
+                    gmm_obj = GMM(n_components=gmm.n_components, covariance_type=gmm.covariance_type)
+                    gmm_obj.covars_ = np.array(gmm.covars_)
+                    gmm_obj.means_ = np.array(gmm.means_)
+                    gmm_obj.weights_ = np.array(gmm.weights_)
+                    gmm_obj_list.append(gmm_obj)
+
+            gmmhmm = GMMHMM(n_components=n_component, n_mix=n_mix, gmms=gmm_obj_list,
+                            n_iter=n_iter, covariance_type=covariance_type,
+                            transmat=transmat, transmat_prior=transmat_prior,
+                            startprob=startprob, startprob_prior=startprob_prior)
+            self.gmmhmms[label] = {'gmmhmm':gmmhmm, 'status_set':value['status_set']}
+
+    def __repr__(self):
+        return '<GMMHMMClassifer instance>\n\tinit_models:%s\n\ttrain_data:%s' % (self._models, self.predict_data_)
+
+    def predict(self, seq):
+        result = {}
+        self.predict_data_ = seq
+        for label, value in self.gmmhmms.iteritems():
+            gmmhmm = value['gmmhmm']
+            status_set = value['status_set']
+            d = Dataset(motion_type=status_set['motion'], sound_type=status_set['sound'],
+                        location_type=status_set['location'])
+            try:
+                seq_converted = np.array(d._convetNumericalSequence(seq))
+            except ValueError:
+                result[label] = 0.0
+            else:
+                result[label] = gmmhmm.score(seq_converted)
+        return result
+
+
 # if __name__ == "__main__":
 #     seq = [{"motion": "sitting", "sound": "tableware", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "talking", "location": "chinese_restaurant"}, {"motion": "walking", "sound": "talking", "location": "night_club"}, {"motion": "walking", "sound": "tableware", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "talking", "location": "night_club"}, {"motion": "sitting", "sound": "laugh", "location": "night_club"}, {"motion": "sitting", "sound": "talking", "location": "night_club"}, {"motion": "walking", "sound": "silence", "location": "chinese_restaurant"}, {"motion": "walking", "sound": "laugh", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "laugh", "location": "chinese_restaurant"}]
 #     models = [
