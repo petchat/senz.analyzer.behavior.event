@@ -71,7 +71,27 @@ def trainingGMMHMM(
     return new_gmmhmm
 
 
-class GMMHMMTrainer(object):
+class BaseTrainer(object):
+    '''Base class for all trainers
+
+    Attributes
+    ----------
+    _model: init params
+    params_: params after fit
+    train_data_: current train datas
+
+    Methods
+    -------
+    __init__
+    fit
+    '''
+    def __init__(self, _model):
+        self._model = _model
+        self.params_ = {}
+        self.train_data_ = []
+
+
+class GMMHMMTrainer(BaseTrainer):
     '''A wrapper to GMMHMM
 
     Attributes
@@ -83,15 +103,17 @@ class GMMHMMTrainer(object):
     '''
 
     def __init__(self, _model):
+        super(GMMHMMTrainer, self).__init__(_model)
+
         hmm_params = _model['hmmParams']
         gmm_params = _model['gmmParams']
         n_iter = _model.get('nIter', 50)
 
-        transmat = hmm_params['transMat']
-        transmat_prior = hmm_params['transMatPrior']
+        transmat = np.array(hmm_params['transMat'])
+        transmat_prior = np.array(hmm_params['transMatPrior'])
         n_component = hmm_params['nComponent']
-        startprob = hmm_params['startProb']
-        startprob_prior = hmm_params['startProbPrior']
+        startprob = np.array(hmm_params['startProb'])
+        startprob_prior = np.array(hmm_params['startProbPrior'])
 
         n_mix = gmm_params['nMix']
         covariance_type = gmm_params['covarianceType']
@@ -108,13 +130,10 @@ class GMMHMMTrainer(object):
                 gmm_obj.weights_ = np.array(gmm.weights_)
                 gmm_obj_list.append(gmm_obj)
 
-        self._model = _model
         self.gmmhmm = GMMHMM(n_components=n_component, n_mix=n_mix, gmms=gmm_obj_list,
                              n_iter=n_iter, covariance_type=covariance_type,
                              transmat=transmat, transmat_prior=transmat_prior,
                              startprob=startprob, startprob_prior=startprob_prior)
-        self.params_ = None
-        self.train_data_ = []
 
     def __repr__(self):
         return '<GMMHMMTrainer instance>\n\tinit_models:%s\n\tparams:%s\n\ttrain_data:%s' % (self._model,
@@ -129,9 +148,9 @@ class GMMHMMTrainer(object):
             gmms_.append({
                 'nComponent': gmm.n_components,
                 'nIter': gmm.n_iter,
-                'means': gmm.means_,
-                'covars': gmm.covars_,
-                'weights': gmm.weights_,
+                'means': gmm.means_.tolist(),
+                'covars': gmm.covars_.tolist(),
+                'weights': gmm.weights_.tolist(),
                 'covariance_type': gmm.covariance_type,
             })
         self.train_data_ += train_data.tolist()
@@ -139,10 +158,10 @@ class GMMHMMTrainer(object):
             'nIter': self.gmmhmm.n_iter,
             'hmmParams': {
                 'nComponent': self.gmmhmm.n_components,
-                'transMat': self.gmmhmm.transmat_,
-                'transMatPrior': self.gmmhmm.transmat_prior,
-                'startProb': self.gmmhmm.startprob_,
-                'startProbPrior': self.gmmhmm.startprob_prior,
+                'transMat': self.gmmhmm.transmat_.tolist(),
+                'transMatPrior': self.gmmhmm.transmat_prior.tolist(),
+                'startProb': self.gmmhmm.startprob_.tolist(),
+                'startProbPrior': self.gmmhmm.startprob_prior.tolist(),
             },
             'gmmParams': {
                 'nMix': self.gmmhmm.n_mix,
@@ -155,7 +174,7 @@ class GMMHMMTrainer(object):
 if __name__ == '__main__':
     from datasets import Dataset
     d = Dataset()
-    d.randomObservations("dining.chineseRestaurant", 10, 10)
+    d.randomObservations("dining#chineseRestaurant", 10, 10)
 
     _model = {
         "hmmParams": {
@@ -192,8 +211,39 @@ if __name__ == '__main__':
                 0.1,
                 0.2
             ],
-            "startProbPrior": 0.4,
-            "transMatPrior": 1.0,
+            "startProbPrior": [
+                0.4,
+                0.3,
+                0.1,
+                0.2
+                ],
+            # "transMatPrior": 1.0,
+            "transMatPrior": [
+              [
+                0.2,
+                0.1,
+                0.3,
+                0.4
+              ],
+              [
+                0.3,
+                0.2,
+                0.2,
+                0.3
+              ],
+              [
+                0.1,
+                0.1,
+                0.1,
+                0.7
+              ],
+              [
+                0.1,
+                0.3,
+                0.4,
+                0.2
+              ]
+            ]
         },
         "gmmParams": {
             "nMix": 4,

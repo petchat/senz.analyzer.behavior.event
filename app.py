@@ -174,7 +174,9 @@ def predict():
     ----------
     data: JSON obj
       e.g. {
-            "seq" : [{"motion": "sitting", "sound": "tableware", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "talking", "location": "chinese_restaurant"}, {"motion": "walking", "sound": "talking", "location": "night_club"}, {"motion": "walking", "sound": "tableware", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "talking", "location": "night_club"}, {"motion": "sitting", "sound": "laugh", "location": "night_club"}, {"motion": "sitting", "sound": "talking", "location": "night_club"}, {"motion": "walking", "sound": "silence", "location": "chinese_restaurant"}, {"motion": "walking", "sound": "laugh", "location": "chinese_restaurant"}, {"motion": "sitting", "sound": "laugh", "location": "chinese_restaurant"}],
+            "seq" : [{"motion": "sitting", "sound": "unknown", "location": "chinese_restaurant"},
+                     {"motion": "sitting", "sound": "shop", "location": "chinese_restaurant"},
+                     {"motion": "walking", "sound": "shop", "location": "night_club"}],
             "tag":"init_model"
            }
       seq: list

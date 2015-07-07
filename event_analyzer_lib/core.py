@@ -55,23 +55,19 @@ def trainEventRandomly(
     train_obs_len = 10
     train_obs_count = 30
     d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
-                location_type=location_set)
+                location_type=location_set, event_prob_map=getEventProbMap())
     d.randomObservations(event_type, train_obs_len, train_obs_count)
-    # TODO: 检查为什么sound 生成出来是None: event_prob_map里出现了数据库没有的key `step`
-    print(d)
-    print(d.obs)
+    observations = d.obs
     logger.debug('[trainEventRandomly] %s' % (d))
 
     description = 'Random train algo_type=%s for eventType=%s, random train obs_len=%s, obs_count=%s' % (
         algo_type, event_type, train_obs_len, train_obs_count)
     TRAINER = algo_type2trainer_map[algo_type]
     my_trainer = TRAINER(model_param)
-    if not d.getDataset():
-        raise ValueError('eventType:%s not in Dataset default event_type' % (event_type))
     my_trainer.fit(d.getDataset())
 
-    return setModel(algo_type, tag, event_type, my_trainer.params_, status_sets,
-                    datetime.datetime.now(), description, my_trainer.train_data_)
+    return setModel(algo_type, 'train_randomly', event_type, my_trainer.params_, status_sets,
+                    datetime.datetime.now(), description, observations)
 
 
 def predictEvent(seq, tag, algo_type):

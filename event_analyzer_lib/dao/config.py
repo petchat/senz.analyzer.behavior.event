@@ -1,4 +1,4 @@
-__all__ = ["getSystemStatusSets", "getEventInfo", "getEventList"]
+__all__ = ["getSystemStatusSets", "getEventInfo", "getEventList", "getEventProbMap"]
 
 from leancloud import Object
 from leancloud import Query
@@ -56,4 +56,12 @@ def getEventList():
         if events[event]["isActive"] is True:
             event_list.append(event)
     return event_list
+
+def getEventProbMap():
+    event_list = getEventList()
+    event_prob_map = {}
+    for key, value in _getConfig('event_prob_map').iteritems():
+        if key in event_list:
+            event_prob_map[key] = value
+    return event_prob_map
 
