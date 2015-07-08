@@ -82,13 +82,17 @@ class BaseTrainer(object):
 
     Methods
     -------
-    __init__
-    fit
+    __init__(self, _model)
+    fit(self, train_data)
     '''
+
     def __init__(self, _model):
         self._model = _model
         self.params_ = {}
         self.train_data_ = []
+
+    def fit(self, train_data):
+        pass
 
 
 class GMMHMMTrainer(BaseTrainer):
@@ -124,10 +128,10 @@ class GMMHMMTrainer(BaseTrainer):
             gmm_obj_list = None
         else:
             for gmm in gmms:
-                gmm_obj = GMM(n_components=gmm.n_components, covariance_type=gmm.covariance_type)
-                gmm_obj.covars_ = np.array(gmm.covars_)
-                gmm_obj.means_ = np.array(gmm.means_)
-                gmm_obj.weights_ = np.array(gmm.weights_)
+                gmm_obj = GMM(n_components=gmm['nComponent'], covariance_type=gmm['covarianceType'])
+                gmm_obj.covars_ = np.array(gmm['covars'])
+                gmm_obj.means_ = np.array(gmm['means'])
+                gmm_obj.weights_ = np.array(gmm['weights'])
                 gmm_obj_list.append(gmm_obj)
 
         self.gmmhmm = GMMHMM(n_components=n_component, n_mix=n_mix, gmms=gmm_obj_list,
@@ -151,7 +155,7 @@ class GMMHMMTrainer(BaseTrainer):
                 'means': gmm.means_.tolist(),
                 'covars': gmm.covars_.tolist(),
                 'weights': gmm.weights_.tolist(),
-                'covariance_type': gmm.covariance_type,
+                'covarianceType': gmm.covariance_type,
             })
         self.train_data_ += train_data.tolist()
         self.params_ = {
@@ -165,7 +169,7 @@ class GMMHMMTrainer(BaseTrainer):
             },
             'gmmParams': {
                 'nMix': self.gmmhmm.n_mix,
-                'covariance_type': self.gmmhmm.covariance_type,
+                'covarianceType': self.gmmhmm.covariance_type,
                 'gmms': gmms_,
             }
         }

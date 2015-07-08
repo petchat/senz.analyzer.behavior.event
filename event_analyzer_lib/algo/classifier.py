@@ -2,6 +2,9 @@ from hmmlearn.hmm import GMMHMM
 from datasets import Dataset
 from sklearn.mixture.gmm import GMM
 import numpy as np
+import logging
+
+logger = logging.getLogger('logentries')
 
 def classifyByGMMHMM(seq, models, configs):
 
@@ -57,7 +60,29 @@ def classifyByGMMHMM(seq, models, configs):
 
     return results
 
-class GMMHMMClassifer(object):
+class BaseClassifier(object):
+    '''Base class for all classifier
+
+    Attributes
+    ----------
+    _models: list of dict
+      init models params
+    predict_data_: current predict_data
+
+    Methods
+    -------
+    __init__(self, _models)
+    predict(self, seq)
+    '''
+
+    def __init__(self, _models):
+        self._models = _models
+
+    def predict(self, seq):
+        pass
+
+
+class GMMHMMClassifier(BaseClassifier):
     '''A wrapper to a set of GMMHMMs for predict
 
     Attributes
@@ -70,7 +95,7 @@ class GMMHMMClassifer(object):
     '''
 
     def __init__(self, _models):
-        self._models = _models
+        super(GMMHMMClassifier, self).__init__(_models)
         self.gmmhmms = {}
         self.predict_data_ = None
 
@@ -80,11 +105,11 @@ class GMMHMMClassifer(object):
             gmm_params = _model['gmmParams']
             n_iter = _model.get('nIter', 50)
 
-            transmat = hmm_params['transMat']
-            transmat_prior = hmm_params['transMatPrior']
+            transmat = np.array(hmm_params['transMat'])
+            transmat_prior = np.array(hmm_params['transMatPrior'])
             n_component = hmm_params['nComponent']
-            startprob = hmm_params['startProb']
-            startprob_prior = hmm_params['startProbPrior']
+            startprob = np.array(hmm_params['startProb'])
+            startprob_prior = np.array(hmm_params['startProbPrior'])
 
             n_mix = gmm_params['nMix']
             covariance_type = gmm_params['covarianceType']
@@ -95,17 +120,17 @@ class GMMHMMClassifer(object):
                 gmm_obj_list = None
             else:
                 for gmm in gmms:
-                    gmm_obj = GMM(n_components=gmm.n_components, covariance_type=gmm.covariance_type)
-                    gmm_obj.covars_ = np.array(gmm.covars_)
-                    gmm_obj.means_ = np.array(gmm.means_)
-                    gmm_obj.weights_ = np.array(gmm.weights_)
+                    gmm_obj = GMM(n_components=gmm['nComponent'], covariance_type=gmm['covarianceType'])
+                    gmm_obj.covars_ = np.array(gmm['covars'])
+                    gmm_obj.means_ = np.array(gmm['means'])
+                    gmm_obj.weights_ = np.array(gmm['weights'])
                     gmm_obj_list.append(gmm_obj)
 
             gmmhmm = GMMHMM(n_components=n_component, n_mix=n_mix, gmms=gmm_obj_list,
                             n_iter=n_iter, covariance_type=covariance_type,
                             transmat=transmat, transmat_prior=transmat_prior,
                             startprob=startprob, startprob_prior=startprob_prior)
-            self.gmmhmms[label] = {'gmmhmm':gmmhmm, 'status_set':value['status_set']}
+            self.gmmhmms[label] = {'gmmhmm': gmmhmm, 'status_set': value['status_set']}
 
     def __repr__(self):
         return '<GMMHMMClassifer instance>\n\tinit_models:%s\n\ttrain_data:%s' % (self._models, self.predict_data_)
@@ -118,12 +143,8 @@ class GMMHMMClassifer(object):
             status_set = value['status_set']
             d = Dataset(motion_type=status_set['motion'], sound_type=status_set['sound'],
                         location_type=status_set['location'])
-            try:
-                seq_converted = np.array(d._convetNumericalSequence(seq))
-            except ValueError:
-                result[label] = 0.0
-            else:
-                result[label] = gmmhmm.score(seq_converted)
+            seq_converted = np.array(d._convetNumericalSequence(seq))
+            result[label] = gmmhmm.score(seq_converted)
         return result
 
 

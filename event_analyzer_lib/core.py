@@ -66,7 +66,7 @@ def trainEventRandomly(
     my_trainer = TRAINER(model_param)
     my_trainer.fit(d.getDataset())
 
-    return setModel(algo_type, 'train_randomly', event_type, my_trainer.params_, status_sets,
+    return setModel(algo_type, 'random_train', event_type, my_trainer.params_, status_sets,
                     datetime.datetime.now(), description, observations)
 
 
@@ -84,7 +84,7 @@ def predictEvent(seq, tag, algo_type):
     predict_result: dict
       e.g. {"shopping": 0.7, "sleeping": 0.3}
     '''
-    algo_type2classifer_map = {"GMMHMM": classifier.GMMHMMClassifer}
+    algo_type2classifer_map = {"GMMHMM": classifier.GMMHMMClassifier}
 
     models = {}
     for model in getModelByTag(algo_type, tag):

@@ -112,7 +112,9 @@ def rebuild_event():
 
 @app.route('/trainRandomly/', methods=['POST'])
 def train_randomly():
-    '''init specify event_type & tag model
+    '''init specify event_type & tag model.
+
+    Model's tag will be `` and store in db after train.
 
     Parameters
     ----------
