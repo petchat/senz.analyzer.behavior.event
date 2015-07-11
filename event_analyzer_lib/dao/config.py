@@ -60,8 +60,11 @@ def getEventList():
 def getEventProbMap():
     event_list = getEventList()
     event_prob_map = {}
+    #print('!!!!!!! event_prob_map:%s' % (_getConfig('event_prob_map')))
+    #print('event_list: %s' % (event_list))
     for key, value in _getConfig('event_prob_map').iteritems():
         if key in event_list:
             event_prob_map[key] = value
+    #print('!!!!!!! result:%s' % (event_prob_map))
     return event_prob_map
 

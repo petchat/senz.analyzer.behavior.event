@@ -2,6 +2,7 @@
 
 import os
 import datetime
+import time
 from flask import Flask, request
 import json
 
@@ -21,6 +22,10 @@ if APP_ENV == 'prod':
     logger.setLevel(logging.INFO)
 else:
     logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    ch.setFormatter(logging.Formatter('%(asctime)s - %(name)s : %(levelname)s, %(message)s'))
+    logger.addHandler(ch)
 logentries_handler = LogentriesHandler(LOGENTRIES_TOKEN)
 logger.addHandler(logentries_handler)
 
@@ -110,6 +115,54 @@ def rebuild_event():
     return json.dumps(result)
 
 
+@app.route('/initAll/', methods=['POST'])
+def init_all():
+    '''init model and store in db with input tag
+
+    Parameters
+    ----------
+    data: JSON Obj
+      e.g. {}
+      tag: string, optional, default 'init_model_timestamp'
+      algo_type: string, optional, default "GMMHMM"
+
+    Returns
+    -------
+    result: JSON Obj
+      e.g. {"code":0, "message":"success", "result":""}
+      code: int
+        0 success, 1 fail
+      message: string
+      result:
+    '''
+    if request.headers.has_key('X-Request-Id') and request.headers['X-Request-Id']:
+        x_request_id = request.headers['X-Request-Id']
+    else:
+        x_request_id = ''
+
+    logger.info('<%s>, [init all] enter' %(x_request_id))
+    result = {'code': 1, 'message': ''}
+
+    # params JSON validate
+    try:
+        if request.data:
+            incoming_data = json.loads(request.data)
+        else:
+            incoming_data = {}
+    except ValueError, err_msg:
+        logger.exception('<%s>, [init all] [ValueError] err_msg: %s, params=%s' % (x_request_id, err_msg, request.data))
+        result['message'] = 'Unvalid params: NOT a JSON Object'
+        return json.dumps(result)
+
+    tag = incoming_data.get('tag', 'init_model_%s'%(int(time.time())))
+    algo_type = incoming_data.get('algo_type', 'GMMHMM')
+
+    core.initAll(tag, algo_type)
+    result['message'] = 'success'
+    result['code'] = 0
+    return json.dumps(result)
+
+
 @app.route('/trainRandomly/', methods=['POST'])
 def train_randomly():
     '''init specify event_type & tag model.
@@ -119,9 +172,10 @@ def train_randomly():
     Parameters
     ----------
     data: JSON Obj
-      e.g. {"event_type":"shopping#mall", "tag":"init_model"}
+      e.g. {"event_type":"shopping#mall", "source_tag":"init_model"}
       event_type: string
-      tag: string
+      source_tag: string
+      target_tag: string, optional, default "random_train"
       algo_type: string, optional, default "GMMHMM"
 
     Returns
@@ -151,20 +205,79 @@ def train_randomly():
         return json.dumps(result)
 
     # params key checking
-    for key in ['event_type', 'tag']:
+    for key in ['event_type', 'source_tag']:
         if key not in incoming_data:
             logger.exception("<%s>, [rebuild event] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
             result['message'] = "Params content Error: cant't find key=%s" % (key)
             return json.dumps(result)
 
     event_type = incoming_data['event_type']
-    tag = incoming_data['tag']
+    source_tag = incoming_data['source_tag']
+    target_tag = incoming_data.get('target_tag', 'random_train')
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
 
-    model_id = core.trainEventRandomly(event_type, tag, algo_type)
+    model_id = core.trainEventRandomly(event_type, source_tag, target_tag, algo_type)
     result['code'] = 0
     result['message'] = 'success'
     result['result'] = {'modelObjectId': model_id}
+
+    return json.dumps(result)
+
+
+@app.route('/trainRandomlyAll/', methods=['POST'])
+def train_randomly_all():
+    '''init model in one tag.
+
+    Model's tag will be `` and store in db after train.
+
+    Parameters
+    ----------
+    data: JSON Obj
+      e.g. {"source_tag":"init_model"}
+      source_tag: string
+      target_tag: string, optional, default "random_train"
+      algo_type: string, optional, default "GMMHMM"
+
+    Returns
+    -------
+    result: JSON Obj
+      e.g. {"code":0, "message":"success", "result":""}
+      code: int
+        0 success, 1 fail
+      message: string
+      result: dict, optional
+        model object id
+    '''
+    if request.headers.has_key('X-Request-Id') and request.headers['X-Request-Id']:
+        x_request_id = request.headers['X-Request-Id']
+    else:
+        x_request_id = ''
+
+    logger.info('<%s>, [train randomly] enter' %(x_request_id))
+    result = {'code': 1, 'message': ''}
+
+    # params JSON validate
+    try:
+        incoming_data = json.loads(request.data)
+    except ValueError, err_msg:
+        logger.exception('<%s>, [tran randomly] [ValueError] err_msg: %s, params=%s' % (x_request_id, err_msg, request.data))
+        result['message'] = 'Unvalid params: NOT a JSON Object'
+        return json.dumps(result)
+
+    # params key checking
+    for key in ['source_tag']:
+        if key not in incoming_data:
+            logger.exception("<%s>, [rebuild event] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
+            result['message'] = "Params content Error: cant't find key=%s" % (key)
+            return json.dumps(result)
+
+    source_tag = incoming_data['source_tag']
+    target_tag = incoming_data.get('target_tag', 'random_train')
+    algo_type = incoming_data.get('algo_type', 'GMMHMM')
+
+    core.trainAll(source_tag, target_tag, algo_type)
+    result['code'] = 0
+    result['message'] = 'success'
 
     return json.dumps(result)
 

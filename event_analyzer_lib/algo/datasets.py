@@ -15,20 +15,25 @@ class Dataset(object):
     rawdata_type = ("motion", "location", "sound")
 
     # event_type  = ("shopping", "dining_out_in_chinese_restaurant", "work", "running_fitness")
-    event_type = ("shopping#mall", "dining#chineseRestaurant", "work#office", "fitness#running")
+    event_type = ('travel_in_scenic', 'emergency', 'work_in_office', 'go_for_concert', 'dining_in_restaurant',
+                  'exercise_indoor', 'go_for_outing', 'exercise_outdoor', 'go_to_class', 'go_home', 'shopping_in_mall',
+                  'movie_in_cinema', 'go_for_exhibition', 'go_work')
 
-    motion_type = ("sitting", "walking", "running", "riding", "driving")
+    # motion_type = ("sitting", "walking", "running", "riding", "driving")
+    motion_type = ('walking', 'driving', 'sitting', 'unknown', 'running', 'riding')
 
-    # sound_level1_type  = ("quiet", "lowish", "noisy")
-
+    '''
     sound_type = (
-    "keyboard", "bird", "tree", "car_crash", "music", "turning_page", "gun", "talking", "quarrel", "mouse_click",
-    "writing", "car_whistle", "school_bell", "wind", "car_driving_by", "stair", "tableware", "laugh", "others",
-    "scream", "subway", "boom", "flowing", "speech", "step", "sea", "car_brakes"
+        "keyboard", "bird", "tree", "car_crash", "music", "turning_page", "gun", "talking", "quarrel", "mouse_click",
+        "writing", "car_whistle", "school_bell", "wind", "car_driving_by", "stair", "tableware", "laugh", "others",
+        "scream", "subway", "boom", "flowing", "speech", "step", "sea", "car_brakes"
     )
+    '''
+    sound_type = ('shop', 'hallway', 'busy_street', 'quiet_street', 'flat', 'unknown', 'train_station', 'bedroom',
+                  'living_room', 'supermarket', 'walk', 'bus_stop', 'classroom', 'subway', 'in_bus',
+                  'study_quite_office', 'forrest', 'kitchen')
 
-    # location_level1_type = ("dining", "shopping", "life_service", "entertainment", "auto_related", "healthcare", "hotel", "scenic_spot", "exhibition", "education", "finance", "infrastructure", "estate")
-
+    '''
     location_type = (
         "hospital", "bath_sauna", "drugstore", "vegetarian_diet", "talent_market", "business_building",
         "comprehensive_market", "motel", "stationer", "high_school", "insurance_company", "home", "resort",
@@ -47,6 +52,26 @@ class Dataset(object):
         "economy_hotel", "glass_store", "public_utilities", "dessert", "cooler", "emergency_center", "car_wash",
         "parking_plot", "chinese_restaurant", "atm", "museum"
     )
+    '''
+
+    location_type = ('economy_hotel', 'outdoor', 'bath_sauna', 'technical_school', 'bike_store', 'pet_service',
+                     'clinic', 'motorcycle', 'guest_house', 'ticket_agent', 'chinese_restaurant', 'flea_market',
+                     'resort', 'pet_market', 'digital_store', 'coffee', 'dessert', 'cosmetics_store', 'traffic',
+                     'work_office', 'bank', 'adult_education', 'bar', 'talent_market', 'university', 'cooler',
+                     'convenience_store', 'snack_bar', 'home', 'post_office', 'hostel', 'motel', 'welfare_house',
+                     'farmers_market', 'vegetarian_diet', 'high_school', 'sports_store', 'gas_station',
+                     'training_institutions', 'muslim', 'supermarket', 'insurance_company', 'others', 'auto_sale',
+                     'video_store', 'commodity_market', 'chafing_dish', 'housekeeping', 'residence',
+                     'convention_center', 'atm', 'lottery_station', 'business_building', 'internet_bar', 'mother_store',
+                     'museum', 'night_club', 'antique_store', 'japan_korea_restaurant', 'other_infrastructure',
+                     'car_maintenance', 'odeum', 'unknown', 'hospital', 'primary_school', 'photographic_studio',
+                     'drugstore', 'glass_store', 'bbq', 'auto_repair', 'toll_station', 'hotel', 'newstand', 'stationer',
+                     'public_utilities', 'library', 'security_company', 'comprehensive_market', 'salvage_station',
+                     'ktv', 'exhibition_hall', 'barbershop', 'clothing_store', 'water_supply_office', 'telecom_offices',
+                     'furniture_store', 'gift_store', 'cinema', 'car_wash', 'travel_agency', 'photography_store',
+                     'electricity_office', 'pawnshop', 'game_room', 'kinder_garten', 'emergency_center', 'intermediary',
+                     'jewelry_store', 'parking_plot', 'laundry', 'scenic_spot', 'buffet', 'gallery',
+                     'western_restaurant', 'science_museum', 'seafood', 'cigarette_store')
 
     rawdata_map = {
         "motion": motion_type,
@@ -55,26 +80,615 @@ class Dataset(object):
     }
 
     event_prob_map = {
-        "dining#chineseRestaurant": {
-            "motion": [{"sitting": 0.7}, {"walking": 0.3}],
-            "sound": [{"talking": 0.4}, {"laugh": 0.3}, {"others": 0.15}, {"tableware": 0.1}, {"Others": 0.05}],
-            "location": [{"chinese_restaurant": 0.7}, {"Others": 0.25}, {"residence": 0.05}]
+        "go_work": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
         },
-        "fitness#running": {
-            "motion": [{"running": 0.4}, {"walking": 0.4}, {"sitting": 0.2}],
-            "sound": [{"step": 0.2}, {"wind": 0.2}, {"others": 0.2}, {"car_driving_by": 0.2}, {"Others": 0.2}],
-            "location": [{"scenic_spot": 0.3}, {"Others": 0.3}, {"residence": 0.2}, {"traffic": 0.2}]
+        "go_to_class": {
+            "motion": [
+                {
+                    "walking": 0.2
+                },
+                {
+                    "sitting": 0.8
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
         },
-        "work#office": {
-            "motion": [{"sitting": 0.85}, {"walking": 0.15}],
-            "sound": [{"step": 0.2}, {"others": 0.2}, {"keyboard": 0.2}, {"mouse_click": 0.1}, {"turning_page": 0.1},
-                      {"talking": 0.2}],
-            "location": [{"work_office": 0.7}, {"home": 0.2}, {"Others": 0.1}]
+        "go_for_concert": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
         },
-        "shopping#mall": {
-            "motion": [{"walking": 0.7}, {"sitting": 0.3}],
-            "sound": [{"step": 0.2}, {"talking": 0.4}, {"car_driving_by": 0.1}, {"music": 0.2}, {"Others": 0.1}],
-            "location": [{"comprehensive_market": 0.7}, {"chinese_restaurant": 0.2}, {"Others": 0.1}]
+        "travel_in_scenic": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "go_home": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "dining_in_restaurant": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "movie_in_cinema": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "emergency": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "go_for_outing": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "work_in_office": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "exercise_outdoor": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "go_for_exhibition": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "shopping_in_mall": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
+        },
+        "exercise_indoor": {
+            "motion": [
+                {
+                    "running": 0.1
+                },
+                {
+                    "walking": 0.4
+                },
+                {
+                    "sitting": 0.1
+                },
+                {
+                    "driving": 0.4
+                }
+            ],
+            "sound": [
+                {
+                    "walk": 0.1
+                },
+                {
+                    "quiet_street": 0.1
+                },
+                {
+                    "subway": 0.2
+                },
+                {
+                    "in_bus": 0.2
+                },
+                {
+                    "busy_street": 0.4
+                }
+            ],
+            "location": [
+                {
+                    "traffic": 0.6
+                },
+                {
+                    "Others": 0.2
+                },
+                {
+                    "residence": 0.2
+                }
+            ]
         }
     }
 
@@ -248,31 +862,32 @@ class Dataset(object):
         self.obs = obs
         return self
 
-    # def plotObservations3D(self):
-    #     # TODO: Currently we only process 3-dimensinal plot.
-    #     # Create a new figure
-    #     fig = plt.figure()
-    #     ax = fig.add_subplot(111, projection="3d")
-    #     n_obs = np.array(self._convertNumericalObservation(self.obs))
-    #     dim = n_obs.shape[0] * n_obs.shape[1]
-    #     # Extract every axis data.
-    #     xs = n_obs[:, :, 0].reshape(dim, )
-    #     ys = n_obs[:, :, 1].reshape(dim, )
-    #     zs = n_obs[:, :, 2].reshape(dim, )
-    #     # plot
-    #     ax.scatter(xs, ys, zs, c="r", marker="o")
-    #     ax.set_xlabel("Motion Label")
-    #     ax.set_ylabel("Location Label")
-    #     ax.set_zlabel("Sound Label")
-    #     # show the figure
-    #     plt.show()
+        # def plotObservations3D(self):
+        #     # TODO: Currently we only process 3-dimensinal plot.
+        #     # Create a new figure
+        #     fig = plt.figure()
+        #     ax = fig.add_subplot(111, projection="3d")
+        #     n_obs = np.array(self._convertNumericalObservation(self.obs))
+        #     dim = n_obs.shape[0] * n_obs.shape[1]
+        #     # Extract every axis data.
+        #     xs = n_obs[:, :, 0].reshape(dim, )
+        #     ys = n_obs[:, :, 1].reshape(dim, )
+        #     zs = n_obs[:, :, 2].reshape(dim, )
+        #     # plot
+        #     ax.scatter(xs, ys, zs, c="r", marker="o")
+        #     ax.set_xlabel("Motion Label")
+        #     ax.set_ylabel("Location Label")
+        #     ax.set_zlabel("Sound Label")
+        #     # show the figure
+        #     plt.show()
 
 
 if __name__ == "__main__":
     dataset = Dataset()
-    dataset.randomObservations("dining#chineseRestaurant", 10, 1)
+    dataset.randomObservations("shopping_in_mall", 10, 1)
     print dataset.obs
     print dataset.getDataset()
     print(dataset)
     # dataset.plotObservations3D()
 
+    print(dataset.randomSequence("shopping_in_mall", 5))

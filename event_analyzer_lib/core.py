@@ -5,6 +5,7 @@ from dao.model import *
 from algo.datasets import Dataset
 import datetime
 import logging
+import json
 from algo import trainer, classifier
 
 logger = logging.getLogger('logentries')
@@ -37,14 +38,25 @@ def rebuildEvent(
                     model_param=init_params, status_sets=sys_status_sets, timestamp=now, description=description)
 
 
+def initAll(new_tag, algo_type):
+    # Get events' info from db.
+    events = getEventInfo()
+
+    for event in events:
+        rebuildEvent(event, algo_type, new_tag)
+
+    return True
+
+
 def trainEventRandomly(
         event_type,
-        tag,
+        source_tag,
+        target_tag,
         algo_type="GMMHMM"
 ):
     algo_type2trainer_map = {'GMMHMM': trainer.GMMHMMTrainer}
 
-    model = getModel(algo_type, tag, event_type)
+    model = getModel(algo_type, source_tag, event_type)
     model_param = model["modelParam"]
     status_sets = model["statusSets"]
 
@@ -56,9 +68,10 @@ def trainEventRandomly(
     train_obs_count = 30
     d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
                 location_type=location_set, event_prob_map=getEventProbMap())
+    logger.debug('[trainEventRandomly] Dataset: %s' % (d))
     d.randomObservations(event_type, train_obs_len, train_obs_count)
     observations = d.obs
-    logger.debug('[trainEventRandomly] %s' % (d))
+    logger.debug('[trainEventRandomly] obs: %s' % (observations))
 
     description = 'Random train algo_type=%s for eventType=%s, random train obs_len=%s, obs_count=%s' % (
         algo_type, event_type, train_obs_len, train_obs_count)
@@ -66,8 +79,17 @@ def trainEventRandomly(
     my_trainer = TRAINER(model_param)
     my_trainer.fit(d.getDataset())
 
-    return setModel(algo_type, 'random_train', event_type, my_trainer.params_, status_sets,
-                    datetime.datetime.now(), description, observations)
+    return setModel(algo_type, target_tag, event_type, my_trainer.params_, status_sets,
+                    datetime.datetime.now(), description, json.dumps(observations))
+
+def trainAll(source_tag, target_tag, algo_type):
+    # Get events' info from db.
+    events = getEventInfo()
+
+    for event in events:
+        trainEventRandomly(event, source_tag, target_tag, algo_type)
+
+    return True
 
 
 def predictEvent(seq, tag, algo_type):
