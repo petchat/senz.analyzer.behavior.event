@@ -334,7 +334,16 @@ def predict():
     tag = incoming_data['tag']
     algo_type = incoming_data.get('algo_type', "GMMHMM")
 
-    result['result'] = core.predictEvent(seq, tag, algo_type)
+    # data clean for seq
+    seq_cleaned = []
+    for elem in seq:
+        seq_cleaned.append({
+            'location': elem['location'],
+            'motion': elem['motion'],
+            'sound': elem['sound'],
+        })
+
+    result['result'] = core.predictEvent(seq_cleaned, tag, algo_type)
     result['code'] = 0
     result['message'] = 'success'
 
