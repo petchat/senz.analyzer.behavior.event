@@ -138,71 +138,47 @@ class Dataset(object):
                     "walk": 0.1
                 },
                 {
-                    "quiet_street": 0.1
-                },
-                {
-                    "subway": 0.2
-                },
-                {
-                    "in_bus": 0.2
-                },
-                {
-                    "busy_street": 0.4
+                    "classroom": 0.9
                 }
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "high_school": 0.4
                 },
                 {
-                    "Others": 0.2
+                    "university": 0.4
                 },
                 {
-                    "residence": 0.2
+                    "primary_school": 0.1
+                },
+                {
+                    "adult_education": 0.1
                 }
             ]
         },
         "go_for_concert": {
             "motion": [
                 {
-                    "running": 0.1
+                    "walking": 0.2
                 },
                 {
-                    "walking": 0.4
-                },
-                {
-                    "sitting": 0.1
-                },
-                {
-                    "driving": 0.4
+                    "sitting": 0.8
                 }
             ],
             "sound": [
                 {
-                    "walk": 0.1
-                },
-                {
-                    "quiet_street": 0.1
-                },
-                {
-                    "subway": 0.2
-                },
-                {
-                    "in_bus": 0.2
-                },
-                {
-                    "busy_street": 0.4
+                    "Others": 1
                 }
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "gallery": 0.6
                 },
                 {
-                    "Others": 0.2
+                    "exhibition_hall": 0.2
                 },
                 {
-                    "residence": 0.2
+                    "odeum": 0.2
                 }
             ]
         },
@@ -212,13 +188,13 @@ class Dataset(object):
                     "running": 0.1
                 },
                 {
-                    "walking": 0.4
+                    "walking": 0.5
                 },
                 {
-                    "sitting": 0.1
+                    "sitting": 0.2
                 },
                 {
-                    "driving": 0.4
+                    "driving": 0.2
                 }
             ],
             "sound": [
@@ -229,13 +205,13 @@ class Dataset(object):
                     "quiet_street": 0.1
                 },
                 {
-                    "subway": 0.2
+                    "busy_street": 0.2
                 },
                 {
-                    "in_bus": 0.2
+                    "shop": 0.2
                 },
                 {
-                    "busy_street": 0.4
+                    "forrest": 0.4
                 }
             ],
             "location": [
@@ -300,118 +276,97 @@ class Dataset(object):
                     "running": 0.1
                 },
                 {
-                    "walking": 0.4
+                    "walking": 0.2
                 },
                 {
-                    "sitting": 0.1
-                },
-                {
-                    "driving": 0.4
+                    "sitting": 0.7
                 }
             ],
             "sound": [
                 {
-                    "walk": 0.1
+                    "walk": 0.3
                 },
                 {
-                    "quiet_street": 0.1
+                    "kitchen": 0.6
                 },
                 {
-                    "subway": 0.2
-                },
-                {
-                    "in_bus": 0.2
-                },
-                {
-                    "busy_street": 0.4
+                    "living_room": 0.1
                 }
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "vegetarian_diet": 0.05
                 },
                 {
-                    "Others": 0.2
+                    "western_restaurant": 0.2
                 },
                 {
-                    "residence": 0.2
+                    "chafing_dish": 0.05
+                },
+                {
+                    "buffet": 0.05
+                },
+                {
+                    "muslim": 0.05
+                },
+                {
+                    "seafood": 0.05
+                },
+                {
+                    "bbq": 0.05
+                },
+                {
+                    "chinese_restaurant": 0.5
                 }
             ]
         },
         "movie_in_cinema": {
             "motion": [
                 {
-                    "running": 0.1
+                    "walking": 0.1
                 },
                 {
-                    "walking": 0.4
-                },
-                {
-                    "sitting": 0.1
-                },
-                {
-                    "driving": 0.4
+                    "sitting": 0.9
                 }
             ],
             "sound": [
                 {
-                    "walk": 0.1
-                },
-                {
-                    "quiet_street": 0.1
-                },
-                {
-                    "subway": 0.2
-                },
-                {
-                    "in_bus": 0.2
-                },
-                {
-                    "busy_street": 0.4
+                    "Others": 1
                 }
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "cinema": 0.9
                 },
                 {
-                    "Others": 0.2
-                },
-                {
-                    "residence": 0.2
+                    "Others": 0.1
                 }
             ]
         },
         "emergency": {
             "motion": [
                 {
-                    "running": 0.1
+                    "running": 0.5
                 },
                 {
-                    "walking": 0.4
+                    "walking": 0.2
                 },
                 {
                     "sitting": 0.1
                 },
                 {
-                    "driving": 0.4
+                    "driving": 0.2
                 }
             ],
             "sound": [
                 {
-                    "walk": 0.1
-                },
-                {
-                    "quiet_street": 0.1
-                },
-                {
                     "subway": 0.2
                 },
                 {
-                    "in_bus": 0.2
+                    "in_bus": 0.3
                 },
                 {
-                    "busy_street": 0.4
+                    "busy_street": 0.5
                 }
             ],
             "location": [
@@ -419,7 +374,7 @@ class Dataset(object):
                     "traffic": 0.6
                 },
                 {
-                    "Others": 0.2
+                    "emergency_center": 0.2
                 },
                 {
                     "residence": 0.2
@@ -432,13 +387,13 @@ class Dataset(object):
                     "running": 0.1
                 },
                 {
-                    "walking": 0.4
+                    "walking": 0.5
                 },
                 {
-                    "sitting": 0.1
+                    "sitting": 0.2
                 },
                 {
-                    "driving": 0.4
+                    "driving": 0.2
                 }
             ],
             "sound": [
@@ -449,13 +404,13 @@ class Dataset(object):
                     "quiet_street": 0.1
                 },
                 {
-                    "subway": 0.2
+                    "busy_street": 0.2
                 },
                 {
-                    "in_bus": 0.2
+                    "shop": 0.2
                 },
                 {
-                    "busy_street": 0.4
+                    "forrest": 0.4
                 }
             ],
             "location": [
@@ -473,16 +428,10 @@ class Dataset(object):
         "work_in_office": {
             "motion": [
                 {
-                    "running": 0.1
+                    "walking": 0.1
                 },
                 {
-                    "walking": 0.4
-                },
-                {
-                    "sitting": 0.1
-                },
-                {
-                    "driving": 0.4
+                    "sitting": 0.9
                 }
             ],
             "sound": [
@@ -490,145 +439,106 @@ class Dataset(object):
                     "walk": 0.1
                 },
                 {
-                    "quiet_street": 0.1
+                    "living_room": 0.2
                 },
                 {
-                    "subway": 0.2
-                },
-                {
-                    "in_bus": 0.2
-                },
-                {
-                    "busy_street": 0.4
+                    "study_quite_office": 0.7
                 }
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "business_building": 0.3
                 },
                 {
-                    "Others": 0.2
+                    "university": 0.1
                 },
                 {
-                    "residence": 0.2
+                    "work_office": 0.6
                 }
             ]
         },
         "exercise_outdoor": {
             "motion": [
                 {
-                    "running": 0.1
+                    "running": 0.6
                 },
                 {
-                    "walking": 0.4
+                    "walking": 0.3
                 },
                 {
                     "sitting": 0.1
-                },
-                {
-                    "driving": 0.4
                 }
             ],
             "sound": [
                 {
-                    "walk": 0.1
+                    "walk": 0.3
                 },
                 {
-                    "quiet_street": 0.1
+                    "quiet_street": 0.4
                 },
                 {
-                    "subway": 0.2
-                },
-                {
-                    "in_bus": 0.2
-                },
-                {
-                    "busy_street": 0.4
+                    "busy_street": 0.3
                 }
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "traffic": 0.3
                 },
                 {
-                    "Others": 0.2
+                    "outdoor": 0.6
                 },
                 {
-                    "residence": 0.2
+                    "university": 0.1
                 }
             ]
         },
         "go_for_exhibition": {
             "motion": [
                 {
-                    "running": 0.1
+                    "walking": 0.7
                 },
                 {
-                    "walking": 0.4
-                },
-                {
-                    "sitting": 0.1
-                },
-                {
-                    "driving": 0.4
+                    "sitting": 0.3
                 }
             ],
             "sound": [
                 {
-                    "walk": 0.1
+                    "walk": 0.3
                 },
                 {
-                    "quiet_street": 0.1
+                    "hallway": 0.3
                 },
                 {
-                    "subway": 0.2
+                    "living_room": 0.3
                 },
                 {
-                    "in_bus": 0.2
-                },
-                {
-                    "busy_street": 0.4
+                    "study_quite_office": 0.1
                 }
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "museum": 0.6
                 },
                 {
-                    "Others": 0.2
-                },
-                {
-                    "residence": 0.2
+                    "gallery": 0.4
                 }
             ]
         },
         "shopping_in_mall": {
             "motion": [
                 {
-                    "running": 0.1
+                    "walking": 0.8
                 },
                 {
-                    "walking": 0.4
-                },
-                {
-                    "sitting": 0.1
-                },
-                {
-                    "driving": 0.4
+                    "sitting": 0.2
                 }
             ],
             "sound": [
                 {
-                    "walk": 0.1
+                    "walk": 0.4
                 },
                 {
-                    "quiet_street": 0.1
-                },
-                {
-                    "subway": 0.2
-                },
-                {
-                    "in_bus": 0.2
+                    "quiet_street": 0.2
                 },
                 {
                     "busy_street": 0.4
@@ -636,57 +546,42 @@ class Dataset(object):
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "clothing_store": 0.5
+                },
+                {
+                    "sports_store": 0.3
                 },
                 {
                     "Others": 0.2
-                },
-                {
-                    "residence": 0.2
                 }
             ]
         },
         "exercise_indoor": {
             "motion": [
                 {
-                    "running": 0.1
+                    "running": 0.5
                 },
                 {
                     "walking": 0.4
                 },
                 {
                     "sitting": 0.1
-                },
-                {
-                    "driving": 0.4
                 }
             ],
             "sound": [
                 {
-                    "walk": 0.1
+                    "walk": 0.5
                 },
                 {
-                    "quiet_street": 0.1
-                },
-                {
-                    "subway": 0.2
-                },
-                {
-                    "in_bus": 0.2
-                },
-                {
-                    "busy_street": 0.4
+                    "living_room": 0.5
                 }
             ],
             "location": [
                 {
-                    "traffic": 0.6
+                    "home": 0.5
                 },
                 {
-                    "Others": 0.2
-                },
-                {
-                    "residence": 0.2
+                    "residence": 0.5
                 }
             ]
         }
@@ -890,4 +785,4 @@ if __name__ == "__main__":
     print(dataset)
     # dataset.plotObservations3D()
 
-    print(dataset.randomSequence("shopping_in_mall", 5))
+    print(dataset.randomSequence("exercise_outdoor", 10))

@@ -66,5 +66,22 @@ def getEventProbMap():
         if key in event_list:
             event_prob_map[key] = value
     #print('!!!!!!! result:%s' % (event_prob_map))
+    check_valid_event_prob_map(event_prob_map)
     return event_prob_map
 
+def check_valid_event_prob_map(event_prob_map):
+    '''Check event_prob_map valid
+
+    If unvalid, will raise ValueError
+    '''
+    for event, cur_event_prob_map in event_prob_map.iteritems():
+        for key in ['motion', 'sound', 'location']:
+            cur_event_prob_dict = {}
+            for tmp_dict in cur_event_prob_map[key]:
+                cur_event_prob_dict.update(tmp_dict)
+            print(cur_event_prob_dict)
+            if 1.0 != round(reduce(lambda x, y: x+y, cur_event_prob_dict.values())):
+                raise ValueError('event<%s> prob_map[%s] total_probs != 1\n details=%s'
+                                 % (event, key, cur_event_prob_map[key]))
+
+    return True
