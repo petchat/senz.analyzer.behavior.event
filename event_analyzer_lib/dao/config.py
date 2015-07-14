@@ -79,7 +79,7 @@ def check_valid_event_prob_map(event_prob_map):
             cur_event_prob_dict = {}
             for tmp_dict in cur_event_prob_map[key]:
                 cur_event_prob_dict.update(tmp_dict)
-            print(cur_event_prob_dict)
+            #print(cur_event_prob_dict)
             if 1.0 != round(reduce(lambda x, y: x+y, cur_event_prob_dict.values())):
                 raise ValueError('event<%s> prob_map[%s] total_probs != 1\n details=%s'
                                  % (event, key, cur_event_prob_map[key]))

@@ -11,6 +11,9 @@ from algo import trainer, classifier
 logger = logging.getLogger('logentries')
 
 
+ALGOMAP = {'GMMHMM': trainer.GMMHMMTrainer}  # algo_type to trainer class map
+
+
 def rebuildEvent(
         event_type,
         algo_type="GMMHMM",
@@ -48,14 +51,37 @@ def initAll(new_tag, algo_type):
     return True
 
 
+def trainEvent(observations, event_type, source_tag, target_tag, algo_type):
+    '''Train model by input observations
+    '''
+    model = getModel(algo_type, source_tag, event_type)
+    model_param = model["modelParam"]
+    status_sets = model["statusSets"]
+
+    sound_set = status_sets["sound"]
+    motion_set = status_sets["motion"]
+    location_set = status_sets["location"]
+    d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
+                location_type=location_set, event_prob_map=getEventProbMap())
+    numerical_obs = d._convertObs2Dataset(observations)
+    logger.debug('[trainEvent] numerical_obs=%s' % (numerical_obs))
+
+    TRAINER = ALGOMAP[algo_type]
+    my_trainer = TRAINER(model_param)
+    my_trainer.fit(numerical_obs)
+    description = '[source_tag=%s]Train model algo_type=%s for eventType=%s' % (
+        source_tag, algo_type, event_type)
+
+    return setModel(algo_type, target_tag, event_type, my_trainer.params_, status_sets,
+                    datetime.datetime.now(), description, json.dumps(observations))
+
+
 def trainEventRandomly(
         event_type,
         source_tag,
         target_tag,
         algo_type="GMMHMM"
 ):
-    algo_type2trainer_map = {'GMMHMM': trainer.GMMHMMTrainer}
-
     model = getModel(algo_type, source_tag, event_type)
     model_param = model["modelParam"]
     status_sets = model["statusSets"]
@@ -73,9 +99,9 @@ def trainEventRandomly(
     observations = d.obs
     logger.debug('[trainEventRandomly] obs: %s' % (observations))
 
-    description = 'Random train algo_type=%s for eventType=%s, random train obs_len=%s, obs_count=%s' % (
-        algo_type, event_type, train_obs_len, train_obs_count)
-    TRAINER = algo_type2trainer_map[algo_type]
+    description = '[source_tag=%s]Random train algo_type=%s for eventType=%s, random train obs_len=%s, obs_count=%s' % (
+        source_tag, algo_type, event_type, train_obs_len, train_obs_count)
+    TRAINER = ALGOMAP[algo_type]
     my_trainer = TRAINER(model_param)
     my_trainer.fit(d.getDataset())
 
@@ -83,6 +109,8 @@ def trainEventRandomly(
                     datetime.datetime.now(), description, json.dumps(observations))
 
 def trainAll(source_tag, target_tag, algo_type):
+    '''train randomly all
+    '''
     # Get events' info from db.
     events = getEventInfo()
 
