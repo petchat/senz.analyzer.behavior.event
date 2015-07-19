@@ -18,5 +18,5 @@ application = engine
 if __name__ == '__main__':
     # Be runnable locally.
     app.debug = True
-    server = simple_server.make_server('0.0.0.0', 13418, application)
+    server = simple_server.make_server('0.0.0.0', 9010, application)
     server.serve_forever()

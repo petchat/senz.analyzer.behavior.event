@@ -6,8 +6,6 @@ import time
 from flask import Flask, request
 import json
 
-from router.todos import todos_view
-
 from config import *
 import logging
 from logentries import LogentriesHandler
@@ -40,9 +38,6 @@ app = Flask(__name__)
 
 # Attach Bugsnag to Flask's exception handler
 handle_exceptions(app)
-
-# 动态路由
-app.register_blueprint(todos_view, url_prefix='/todos')
 
 
 @app.before_first_request
