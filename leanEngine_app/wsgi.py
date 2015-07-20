@@ -10,6 +10,9 @@ from cloud import engine
 
 from config import APP_ID, MASTER_KEY
 
+from gevent import monkey
+monkey.patch_all()
+
 leancloud.init(APP_ID, master_key=MASTER_KEY)
 
 application = engine

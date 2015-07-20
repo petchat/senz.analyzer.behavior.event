@@ -4,6 +4,7 @@ __all__ = ["getModel", "setModel", "getModelByTag"]
 
 from leancloud import Object
 from leancloud import Query
+import gevent
 
 Model = Object.extend("Model")
 
@@ -58,11 +59,22 @@ def getModelByTag(algo_type, model_tag):
     for model in results:
         models_label_set.add(model.get('eventType'))
 
-    recent_models_list = []
+    threads = []
     for label in models_label_set:
-        result = Query.do_cloud_query('select * from Model where algoType="%s" and tag="%s" and eventType="%s" limit 1 order by -updatedAt'
-                                      % (algo_type, model_tag, label))
-        results = result.results
-        recent_models_list.append(results[0])
+        # gevent for asyc request
+        threads.append(gevent.spawn(async_get_model_by_tag_once, algo_type, model_tag, label))
+    gevent.joinall(threads)
+
+    recent_models_list = [thread.value for thread in threads]
 
     return recent_models_list
+
+
+def async_get_model_by_tag_once(algo_type, model_tag, label):
+    '''wrapper func for gevent
+    '''
+    result = Query.do_cloud_query('select * from Model where algoType="%s" and tag="%s" and eventType="%s" limit 1 order by -updatedAt'
+                                  % (algo_type, model_tag, label))
+    results = result.results
+    return results[0]
+
