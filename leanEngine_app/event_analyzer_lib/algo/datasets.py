@@ -687,12 +687,17 @@ class Dataset(object):
         # validate input rawdata type
         if rawdata_type not in self.rawdata_type:
             return None
+        #print('result_prob_list: %s'%(results_prob_list))
         for result_prob in results_prob_list:
             # validate input possible result list
             if result_prob.keys()[0] not in self.rawdata_map[rawdata_type] and result_prob.keys()[0] != "Others":
+                #print('result_prob:%s' %(result_prob))
+                #print('rawdata_map[%s]=%s' % (rawdata_type, self.rawdata_map[rawdata_type]))
+                #print('!!!!!!*****  Enterhere  !!!!!*****, raw_type=%s' % (rawdata_type))
                 return None
                 # if result_prob.keys()[0] is "other":
                 # result_prob.keys()[0] = ut.chooseRandomly(self.rawdata_map[rawdata_type])
+        print('~~self.rawdata_map: %s' % (self.rawdata_map[rawdata_type]))
         results_prob_list = ut.selectOtherRandomly(results_prob_list, self.rawdata_map[rawdata_type])
         # According to results" probability list,
         # generate the random rawdata.
@@ -730,6 +735,7 @@ class Dataset(object):
             senz = {}
             # generate every type of rawdata.
             for rawdata_type in self.rawdata_type:
+                #print('fuck JCY, event: %s gogogo' % (event))
                 senz[rawdata_type] = self._generateRawdataRandomly(rawdata_type,
                                                                    self.event_prob_map[event][rawdata_type])
             seq.append(senz)

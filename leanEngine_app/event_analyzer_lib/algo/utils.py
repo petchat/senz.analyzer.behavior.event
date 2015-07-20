@@ -30,10 +30,10 @@ def discreteSpecifiedRand(prob_dict_list):
     # print 'rand is', rand
     scale = prob_dict_list[0].values()[0]
     index = 0
-    print('index=%s, len=%s, prob_dict_list=%s' % (index, len(prob_dict_list), prob_dict_list))
+    #print('index=%s, len=%s, prob_dict_list=%s' % (index, len(prob_dict_list), prob_dict_list))
     while index <= len(prob_dict_list)-1:
         # print 'scale is', scale
-        print('index=%s, rand=%s, scale=%s' % (index, rand, scale))
+        #print('index=%s, rand=%s, scale=%s' % (index, rand, scale))
         if rand <= scale:
             return prob_dict_list[index].keys()[0]
         elif rand > scale:
