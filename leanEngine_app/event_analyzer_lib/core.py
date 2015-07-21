@@ -138,15 +138,20 @@ def predictEvent(seq, tag, algo_type):
     '''
     algo_type2classifer_map = {"GMMHMM": classifier.GMMHMMClassifier}
 
+    logger.info('[predict event] start get Model by tag')
     models = {}
     for model in getModelByTag(algo_type, tag):
         models[model.get('eventType')] = {'status_set': model.get('statusSets'), 'param': model.get('param')}
+    logger.info('[predict event] end get Model by tag')
 
     if not models or len(models) == 0:
         raise ValueError("tag=%s don't have models" % (tag))
 
+    logger.info('[predict event] start predict')
     CLASSIFER = algo_type2classifer_map[algo_type]
     my_classifer = CLASSIFER(models)
     logger.info('[predict event] model load success')
+    predict_result = my_classifer.predict(seq)
+    logger.info('[predict event] end predict')
 
-    return my_classifer.predict(seq)
+    return predict_result

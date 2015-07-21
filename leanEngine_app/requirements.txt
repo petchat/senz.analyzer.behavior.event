@@ -7,3 +7,4 @@ blinker
 logentries
 bugsnag
 hmmlearn
+gevent
