@@ -11,6 +11,7 @@ WORKDIR /app
 RUN mkdir ./leanEngine_app
 
 ADD leanEngine_app ./leanEngine_app
+ADD supervisor.conf /etc/supervisor/conf.d/
 RUN pip install -i http://pypi.douban.com/simple/ -r ./leanEngine_app/requirements.txt
 
 EXPOSE 9010
