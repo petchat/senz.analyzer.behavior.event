@@ -3,17 +3,18 @@
 import os
 import datetime
 import time
-from flask import Flask, request, make_response
 import json
-
-from config import *
 import logging
+
+from flask import Flask, request, make_response
 from logentries import LogentriesHandler
 import bugsnag
 from bugsnag.flask import handle_exceptions
-
-from event_analyzer_lib import core, utils
 from leancloud.errors import LeanCloudError
+
+from config import *
+from event_analyzer_lib import core, utils
+
 
 # Configure Logentries
 logger = logging.getLogger('logentries')
@@ -81,7 +82,7 @@ def rebuild_event():
     else:
         x_request_id = ''
 
-    logger.info('<%s>, [init] enter' %(x_request_id))
+    logger.info('<%s>, [init] enter, request ip:%s, ua:%s' %(x_request_id, request.remote_addr, request.remote_user))
     result = {'code': 1, 'message': ''}
 
     # params JSON validate
@@ -141,7 +142,7 @@ def init_all():
     else:
         x_request_id = ''
 
-    logger.info('<%s>, [init all] enter' %(x_request_id))
+    logger.info('<%s>, [init all] enter, request ip:%s, ua:%s' %(x_request_id, request.remote_addr, request.remote_user))
     result = {'code': 1, 'message': ''}
 
     # params JSON validate
@@ -198,7 +199,7 @@ def train_randomly():
     else:
         x_request_id = ''
 
-    logger.info('<%s>, [train randomly] enter' %(x_request_id))
+    logger.info('<%s>, [train randomly] enter, request ip:%s, ua:%s' %(x_request_id, request.remote_addr, request.remote_user))
     result = {'code': 1, 'message': ''}
 
     # params JSON validate
@@ -263,7 +264,7 @@ def train_randomly_all():
     else:
         x_request_id = ''
 
-    logger.info('<%s>, [train randomly all] enter' %(x_request_id))
+    logger.info('<%s>, [train randomly all] enter, request ip=%s, ua=%s' %(x_request_id, request.remote_addr, request.remote_user))
     result = {'code': 1, 'message': ''}
 
     # params JSON validate
@@ -325,7 +326,7 @@ def predict():
     else:
         x_request_id = ''
 
-    logger.info('<%s>, [predict] enter' %(x_request_id))
+    logger.info('<%s>, [predict] enter, request ip:%s, ua:%s' %(x_request_id, request.remote_addr, request.remote_user))
     result = {'code': 1, 'message': ''}
 
     # params JSON validate
@@ -417,7 +418,7 @@ def train():
     else:
         x_request_id = ''
 
-    logger.info('<%s>, [train] enter' %(x_request_id))
+    logger.info('<%s>, [train] enter, request ip:%s, ua:%s' %(x_request_id, request.remote_addr, request.remote_user))
     result = {'code': 1, 'message': ''}
 
     # params JSON validate
