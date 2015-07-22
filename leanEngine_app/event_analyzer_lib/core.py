@@ -122,7 +122,7 @@ def trainAll(source_tag, target_tag, algo_type):
     return True
 
 
-def predictEvent(seq, tag, algo_type):
+def predictEvent(seq, tag, algo_type, x_request_id=''):
     '''seq最可能属于一个tag下哪个label的model
 
     Parameters
@@ -138,20 +138,20 @@ def predictEvent(seq, tag, algo_type):
     '''
     algo_type2classifer_map = {"GMMHMM": classifier.GMMHMMClassifier}
 
-    logger.info('[predict event] start get Model by tag')
+    logger.info('<%s>, [predict event] start get Model by tag:%s' % (x_request_id, tag))
     models = {}
     for model in getModelByTag(algo_type, tag):
         models[model.get('eventType')] = {'status_set': model.get('statusSets'), 'param': model.get('param')}
-    logger.info('[predict event] end get Model by tag')
+    logger.info('<%s>, [predict event] end get Model by tag:%s' %(x_request_id, tag))
 
     if not models or len(models) == 0:
+        logger.error("<%s>, [predict event] tag=%s don't have models" % (x_request_id, tag))
         raise ValueError("tag=%s don't have models" % (tag))
 
-    logger.info('[predict event] start predict')
+    logger.info('<%s>, [predict event] start predict, seq=%s' % (x_request_id, seq))
     CLASSIFER = algo_type2classifer_map[algo_type]
     my_classifer = CLASSIFER(models)
-    logger.info('[predict event] model load success')
     predict_result = my_classifer.predict(seq)
-    logger.info('[predict event] end predict')
+    logger.info('<%s>, [predict event] end predict, seq=%s, predict_result=%s' %(x_request_id, seq, predict_result))
 
     return predict_result

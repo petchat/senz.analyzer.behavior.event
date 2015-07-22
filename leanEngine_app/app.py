@@ -81,14 +81,14 @@ def rebuild_event():
     else:
         x_request_id = ''
 
-    logger.info('<%s>, [rebuild event] enter' %(x_request_id))
+    logger.info('<%s>, [init] enter' %(x_request_id))
     result = {'code': 1, 'message': ''}
 
     # params JSON validate
     try:
         incoming_data = json.loads(request.data)
     except ValueError, err_msg:
-        logger.exception('<%s>, [rebuild event] [ValueError] err_msg: %s, params=%s' % (x_request_id, err_msg, request.data))
+        logger.exception('<%s>, [init] [ValueError] err_msg: %s, params=%s' % (x_request_id, err_msg, request.data))
         result['message'] = 'Unvalid params: NOT a JSON Object'
         result['code'] = 103
         return make_response(json.dumps(result), 400)
@@ -96,7 +96,7 @@ def rebuild_event():
     # params key checking
     for key in ['event_type', 'tag']:
         if key not in incoming_data:
-            logger.exception("<%s>, [rebuild event] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
+            logger.exception("<%s>, [init] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
             result['message'] = "Params content Error: cant't find key=%s" % (key)
             result['code'] = 103
             return make_response(json.dumps(result), 400)
@@ -105,11 +105,13 @@ def rebuild_event():
     tag = incoming_data['tag']
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
 
+    logger.info('<%s>, [init] valid request params: %s' % (x_request_id, incoming_data))
+
     model_id = core.rebuildEvent(event_type, algo_type, tag)
     result['code'] = 0
     result['message'] = 'success'
     result['result'] = {'modelObjectId': model_id}
-    logger.info('<%s> [rebuild event] success' % (x_request_id))
+    logger.info('<%s> [init] success' % (x_request_id))
 
     return json.dumps(result)
 
@@ -156,6 +158,8 @@ def init_all():
 
     tag = incoming_data.get('tag', 'init_model_%s'%(int(time.time())))
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
+
+    logger.info('<%s>, [init all] valid request params: %s' % (x_request_id, incoming_data))
 
     core.initAll(tag, algo_type)
     result['message'] = 'success'
@@ -209,7 +213,7 @@ def train_randomly():
     # params key checking
     for key in ['event_type', 'source_tag']:
         if key not in incoming_data:
-            logger.exception("<%s>, [rebuild event] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
+            logger.exception("<%s>, [train randomly] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
             result['message'] = "Params content Error: cant't find key=%s" % (key)
             result['code'] = 103
             return make_response(json.dumps(result), 400)
@@ -218,6 +222,8 @@ def train_randomly():
     source_tag = incoming_data['source_tag']
     target_tag = incoming_data.get('target_tag', 'random_train')
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
+
+    logger.info('<%s>, [train randomly] valid request params: %s' % (x_request_id, incoming_data))
 
     model_id = core.trainEventRandomly(event_type, source_tag, target_tag, algo_type)
     result['code'] = 0
@@ -275,6 +281,8 @@ def train_randomly_all():
             result['message'] = "Params content Error: cant't find key=%s" % (key)
             return json.dumps(result)
 
+    logger.info('<%s>, [train randomly all] valid request params: %s' % (x_request_id, incoming_data))
+
     source_tag = incoming_data['source_tag']
     target_tag = incoming_data.get('target_tag', 'random_train')
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
@@ -326,18 +334,28 @@ def predict():
     except ValueError, err_msg:
         logger.exception('<%s>, [predict] [ValueError] err_msg: %s, params=%s' % (x_request_id, err_msg, request.data))
         result['message'] = 'Unvalid params: NOT a JSON Object'
-        return json.dumps(result)
+        result['code'] = 103
+        return make_response(json.dumps(result), 400)
 
     # params key checking
     for key in ['seq', 'tag']:
         if key not in incoming_data:
             logger.exception("<%s>, [predict] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
             result['message'] = "Params content Error: cant't find key=%s" % (key)
-            return json.dumps(result)
+            result['code'] = 103
+            return make_response(json.dumps(result), 400)
 
     seq = incoming_data['seq']
     tag = incoming_data['tag']
     algo_type = incoming_data.get('algo_type', "GMMHMM")
+
+    if not seq:
+        result['code'] = 103
+        result['message'] = 'input params [seq=NULL]'
+        logger.info('<%s>, [predct] request params `seq`=NULL' % (x_request_id))
+        return json.dumps(result)
+
+    logger.info('<%s>, [predict] valid request params seq=%s, tag=%s, algo_type=%s' % (x_request_id, seq, tag, algo_type))
 
     try:
         # data clean for seq
@@ -349,10 +367,10 @@ def predict():
                 'sound': elem['sound'],
             })
 
-        result['result'] = core.predictEvent(seq_cleaned, tag, algo_type)
+        result['result'] = core.predictEvent(seq_cleaned, tag, algo_type, x_request_id)
         result['code'] = 0
         result['message'] = 'success'
-        logger.info('<%s> [predict] success' %(x_request_id))
+        logger.info('<%s> [predict] success, predict result=%s' %(x_request_id, result['result']))
     except LeanCloudError, err_msg:
         result['message'] = "[LeanCloudError] Maybe can't find tag=%s" % (tag)
         logger.info('<%s> [predict] [LeanCloudError] %s' % (x_request_id, err_msg))
@@ -428,6 +446,9 @@ def train():
     if not utils.check_2D_list(obs):
         result['message'] = 'input obs=%s is not 2-dimension' % (obs)
         return json.dumps(result)
+
+    logger.info('<%s>, [train] valid request params: %s' % (x_request_id, incoming_data))
+
     # TODO: wrapper for obs
     cleaned_obs = []
     for seq in obs:
