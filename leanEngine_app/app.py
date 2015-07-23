@@ -475,3 +475,18 @@ def train():
         return make_response(json.dumps(result), 400)
 
     return json.dumps(result)
+
+
+@app.route('/isAlive/', methods=['GET'])
+def is_alive():
+    '''API for server alive test
+    '''
+    if request.headers.has_key('X-Request-Id') and request.headers['X-Request-Id']:
+        x_request_id = request.headers['X-Request-Id']
+    else:
+        x_request_id = ''
+
+    logger.info('<%s>, [isAlive] request from ip:%s, ua:%s' %(x_request_id, request.remote_addr,
+                                                                       request.remote_user))
+    result = {'code': 0, 'message': 'Alive'}
+    return json.dumps(result)
