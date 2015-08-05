@@ -14,4 +14,6 @@ ADD leanEngine_app ./leanEngine_app
 ADD supervisor.conf /etc/supervisor/conf.d/
 RUN pip install -i http://pypi.douban.com/simple/ -r ./leanEngine_app/requirements.txt
 
+RUN pip install -i http://pypi.douban.com/simple/ gunicorn==19.1.1
+
 EXPOSE 9010
