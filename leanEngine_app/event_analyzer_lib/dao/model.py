@@ -5,8 +5,13 @@ __all__ = ["getModel", "setModel", "getModelByTag"]
 from leancloud import Object
 from leancloud import Query
 import gevent
+import logging
 
+logger = logging.getLogger('logentries')
 Model = Object.extend("Model")
+
+# Store models in memory
+Model_In_Memory = {}
 
 def getModel(algo_type, model_tag, event_type):
     query = Query(Model)
@@ -37,6 +42,33 @@ def setModel(algo_type, model_tag, event_type, model_param, status_sets, timesta
 
 def getModelByTag(algo_type, model_tag):
     '''
+    返回指定 algo_type 和 model_tag 的 Model
+
+    Parameters
+    ----------
+    algo_type: string
+      model's name
+    tag: string
+      model's tag
+
+    Returns
+    -------
+    recent_models_list: list
+      list of model objs
+    '''
+    # Try to get models from memory
+    # If not, request database
+    if algo_type not in Model_In_Memory:
+        Model_In_Memory[algo_type] = {}
+
+    if model_tag not in Model_In_Memory[algo_type]:
+        Model_In_Memory[algo_type][model_tag] = _getModelByTag_from_db(algo_type, model_tag)
+
+    return Model_In_Memory[algo_type][model_tag]
+
+
+def _getModelByTag_from_db(algo_type, model_tag):
+    '''
     根据tag挑出model，如果tag下的eventType有重复的，选择最新的model.
 
     Parameters
@@ -51,6 +83,7 @@ def getModelByTag(algo_type, model_tag):
     recent_models_list: list
       list of model objs
     '''
+    logger.debug('[_getModelByTag_from_db] algo_type=%s, model_tag=%s MODELS not in Memory' % (algo_type, model_tag))
     result = Query.do_cloud_query('select * from Model where algoType="%s" and tag="%s"' % (algo_type, model_tag))
     results = result.results
 
