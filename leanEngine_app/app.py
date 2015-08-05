@@ -171,17 +171,17 @@ def init_all():
 
 @app.route('/trainRandomly/', methods=['POST'])
 def train_randomly():
-    '''Randomly train a `source_tag` model.
+    '''Randomly train a `sourceTag` model.
 
-    After train, model params will be saved in db and taged `target_tag`
+    After train, model params will be saved in db and taged `targetTag`
 
     Parameters
     ----------
     data: JSON Obj
-      e.g. {"event_type":"shopping#mall", "source_tag":"init_model"}
+      e.g. {"event_type":"shopping#mall", "sourceTag":"init_model"}
       event_type: string
-      source_tag: string
-      target_tag: string, optional, default "random_train"
+      sourceTag: string
+      targetTag: string, optional, default "random_train"
       algo_type: string, optional, default "GMMHMM"
 
     Returns
@@ -212,7 +212,7 @@ def train_randomly():
         return make_response(json.dumps(result), 400)
 
     # params key checking
-    for key in ['event_type', 'source_tag']:
+    for key in ['event_type', 'sourceTag']:
         if key not in incoming_data:
             logger.exception("<%s>, [train randomly] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
             result['message'] = "Params content Error: cant't find key=%s" % (key)
@@ -220,13 +220,13 @@ def train_randomly():
             return make_response(json.dumps(result), 400)
 
     event_type = incoming_data['event_type']
-    source_tag = incoming_data['source_tag']
-    target_tag = incoming_data.get('target_tag', 'random_train')
+    sourceTag = incoming_data['sourceTag']
+    targetTag = incoming_data.get('targetTag', 'random_train')
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
 
     logger.info('<%s>, [train randomly] valid request params: %s' % (x_request_id, incoming_data))
 
-    model_id = core.trainEventRandomly(event_type, source_tag, target_tag, algo_type)
+    model_id = core.trainEventRandomly(event_type, sourceTag, targetTag, algo_type)
     result['code'] = 0
     result['message'] = 'success'
     result['result'] = {'modelObjectId': model_id}
@@ -237,16 +237,16 @@ def train_randomly():
 
 @app.route('/trainRandomlyAll/', methods=['POST'])
 def train_randomly_all():
-    '''Randomly train a `source_tag` model of all event labels.
+    '''Randomly train a `sourceTag` model of all event labels.
 
-    After train, model params will be saved in db and taged `target_tag`
+    After train, model params will be saved in db and taged `targetTag`
 
     Parameters
     ----------
     data: JSON Obj
-      e.g. {"source_tag":"init_model"}
-      source_tag: string
-      target_tag: string, optional, default "random_train"
+      e.g. {"sourceTag":"init_model"}
+      sourceTag: string
+      targetTag: string, optional, default "random_train"
       algo_type: string, optional, default "GMMHMM"
 
     Returns
@@ -276,7 +276,7 @@ def train_randomly_all():
         return json.dumps(result)
 
     # params key checking
-    for key in ['source_tag']:
+    for key in ['sourceTag']:
         if key not in incoming_data:
             logger.exception("<%s>, [train randomly all] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
             result['message'] = "Params content Error: cant't find key=%s" % (key)
@@ -284,11 +284,11 @@ def train_randomly_all():
 
     logger.info('<%s>, [train randomly all] valid request params: %s' % (x_request_id, incoming_data))
 
-    source_tag = incoming_data['source_tag']
-    target_tag = incoming_data.get('target_tag', 'random_train')
+    sourceTag = incoming_data['sourceTag']
+    targetTag = incoming_data.get('targetTag', 'random_train')
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
 
-    core.trainAll(source_tag, target_tag, algo_type)
+    core.trainAll(sourceTag, targetTag, algo_type)
     result['code'] = 0
     result['message'] = 'success'
     logger.info('<%s> [train randomly all] success' % (x_request_id))
@@ -306,7 +306,7 @@ def predict():
             "seq" : [{"motion": "sitting", "sound": "unknown", "location": "chinese_restaurant"},
                      {"motion": "sitting", "sound": "shop", "location": "chinese_restaurant"},
                      {"motion": "walking", "sound": "shop", "location": "night_club"}],
-            "tag":"init_model"
+            "tag":"randomTrain"
            }
       seq: list
       tag: string
@@ -383,9 +383,9 @@ def predict():
 
 @app.route('/train/', methods=['POST'])
 def train():
-    '''Train a `source_tag` model of `event_type` by `obs`.
+    '''Train a `sourceTag` model of `event_type` by `obs`.
 
-    After train, model params will be saved in db and taged `target_tag`
+    After train, model params will be saved in db and taged `targetTag`
 
     Parameters
     ----------
@@ -394,13 +394,13 @@ def train():
             "obs" : [{"motion": "sitting", "sound": "unknown", "location": "chinese_restaurant"},
                      {"motion": "sitting", "sound": "shop", "location": "chinese_restaurant"},
                      {"motion": "walking", "sound": "shop", "location": "night_club"}],
-            "source_tag": "init_model",
+            "sourceTag": "init_model",
             "event_type": "dining_in_restaurant"
            }
       obs: list, must be 2-dimension list
       event_type: string
-      source_tag: string
-      target_tag: string, optional, default equal to `source_tag`
+      sourceTag: string
+      targetTag: string, optional, default equal to `sourceTag`
       algo_type: string, optional, default "GMMHMM"
 
     Returns
@@ -431,7 +431,7 @@ def train():
         return make_response(json.dumps(result), 400)
 
     # params key checking
-    for key in ['obs', 'event_type', 'source_tag']:
+    for key in ['obs', 'event_type', 'sourceTag']:
         if key not in incoming_data:
             logger.exception("<%s>, [train] [KeyError] params=%s, should have key: %s" % (x_request_id, incoming_data, key))
             result['message'] = "Params content Error: cant't find key=%s" % (key)
@@ -439,9 +439,9 @@ def train():
             return make_response(json.dumps(result), 400)
 
     event_type = incoming_data['event_type']
-    source_tag = incoming_data['source_tag']
+    sourceTag = incoming_data['sourceTag']
     obs = incoming_data['obs']
-    target_tag = incoming_data.get('target_tag', source_tag)
+    targetTag = incoming_data.get('targetTag', sourceTag)
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
 
     if not utils.check_2D_list(obs):
@@ -463,13 +463,13 @@ def train():
         cleaned_obs.append(seq_cleaned)
 
     try:
-        model_id = core.trainEvent(obs, event_type, source_tag, target_tag, algo_type)
+        model_id = core.trainEvent(obs, event_type, sourceTag, targetTag, algo_type)
         result['code'] = 0
         result['message'] = 'success'
         result['result'] = {'modelObjectId': model_id}
         logger.info('<%s> [train] success' % (x_request_id))
     except LeanCloudError, err_msg:
-        result['message'] = "[LeanCloudError] Maybe can't find source_tag=%s, event_type=%s" % (source_tag, event_type)
+        result['message'] = "[LeanCloudError] Maybe can't find sourceTag=%s, event_type=%s" % (sourceTag, event_type)
         logger.info('<%s> [train] [LeanCloudError] %s' % (x_request_id, err_msg))
         result['code'] = 103
         return make_response(json.dumps(result), 400)

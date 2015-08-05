@@ -82,6 +82,8 @@ def trainEventRandomly(
         target_tag,
         algo_type="GMMHMM"
 ):
+    logger.info('[trainEventRandomly] event_type=%s, source_tag=%s, target_tag=%s'
+                % (event_type, source_tag, target_tag))
     model = getModel(algo_type, source_tag, event_type)
     model_param = model["modelParam"]
     status_sets = model["statusSets"]
@@ -95,11 +97,9 @@ def trainEventRandomly(
     d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
                 location_type=location_set, event_prob_map=getEventProbMap())
     logger.debug('[trainEventRandomly] Dataset: %s' % (d))
-    #print('[trainEventRandomly] Dataset: %s' % (d))
     d.randomObservations(event_type, train_obs_len, train_obs_count)
     observations = d.obs
     logger.debug('[trainEventRandomly] obs: %s' % (observations))
-    #print('[trainEventRandomly] obs: %s' % (observations))
 
     description = '[source_tag=%s]Random train algo_type=%s for eventType=%s, random train obs_len=%s, obs_count=%s' % (
         source_tag, algo_type, event_type, train_obs_len, train_obs_count)

@@ -3,7 +3,8 @@
 import os
 
 import leancloud
-from wsgiref import simple_server
+#from wsgiref import simple_server
+from gevent.wsgi import WSGIServer
 
 from app import app
 from cloud import engine
@@ -21,5 +22,6 @@ application = engine
 if __name__ == '__main__':
     # Be runnable locally.
     app.debug = True
-    server = simple_server.make_server('0.0.0.0', 9010, application)
+    #server = simple_server.make_server('0.0.0.0', 9010, application)
+    server = WSGIServer(('0.0.0.0', 9010), application)
     server.serve_forever()
