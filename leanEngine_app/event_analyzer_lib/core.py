@@ -80,6 +80,8 @@ def trainEventRandomly(
         event_type,
         source_tag,
         target_tag,
+        obs_len,
+        obs_count,
         algo_type="GMMHMM"
 ):
     logger.info('[trainEventRandomly] event_type=%s, source_tag=%s, target_tag=%s'
@@ -92,8 +94,8 @@ def trainEventRandomly(
     motion_set = status_sets["motion"]
     location_set = status_sets["location"]
 
-    train_obs_len = 10
-    train_obs_count = 30
+    train_obs_len = obs_len
+    train_obs_count = obs_count
     d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
                 location_type=location_set, event_prob_map=getEventProbMap())
     logger.debug('[trainEventRandomly] Dataset: %s' % (d))
@@ -110,14 +112,14 @@ def trainEventRandomly(
     return setModel(algo_type, target_tag, event_type, my_trainer.params_, status_sets,
                     datetime.datetime.now(), description, json.dumps(observations))
 
-def trainAll(source_tag, target_tag, algo_type):
+def trainAll(source_tag, target_tag, obs_len, obs_count, algo_type):
     '''train randomly all
     '''
     # Get events' info from db.
     events = getEventInfo()
 
     for event in events:
-        trainEventRandomly(event, source_tag, target_tag, algo_type)
+        trainEventRandomly(event, source_tag, target_tag, obs_len, obs_count, algo_type)
 
     return True
 

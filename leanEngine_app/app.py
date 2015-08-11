@@ -223,10 +223,12 @@ def train_randomly():
     sourceTag = incoming_data['sourceTag']
     targetTag = incoming_data.get('targetTag', 'random_train')
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
+    obs_len   = incoming_data.get('obs_len', 10)
+    obs_count = incoming_data.get('obs_count', 500)
 
     logger.info('<%s>, [train randomly] valid request params: %s' % (x_request_id, incoming_data))
 
-    model_id = core.trainEventRandomly(event_type, sourceTag, targetTag, algo_type)
+    model_id = core.trainEventRandomly(event_type, sourceTag, targetTag, obs_len, obs_count, algo_type)
     result['code'] = 0
     result['message'] = 'success'
     result['result'] = {'modelObjectId': model_id}
@@ -287,8 +289,10 @@ def train_randomly_all():
     sourceTag = incoming_data['sourceTag']
     targetTag = incoming_data.get('targetTag', 'random_train')
     algo_type = incoming_data.get('algo_type', 'GMMHMM')
+    obs_len   = incoming_data.get('obs_len', 10)
+    obs_count = incoming_data.get('obs_count', 500)
 
-    core.trainAll(sourceTag, targetTag, algo_type)
+    core.trainAll(sourceTag, targetTag, obs_len, obs_count, algo_type)
     result['code'] = 0
     result['message'] = 'success'
     logger.info('<%s> [train randomly all] success' % (x_request_id))
