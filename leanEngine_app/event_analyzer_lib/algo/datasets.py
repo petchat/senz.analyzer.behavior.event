@@ -1146,6 +1146,7 @@ class Dataset(object):
                 # print('result_prob:%s' %(result_prob))
                 # print('rawdata_map[%s]=%s' % (rawdata_type, self.rawdata_map[rawdata_type]))
                 # print('!!!!!!*****  Enterhere  !!!!!*****, raw_type=%s' % (rawdata_type))
+                print result_prob.keys()[0]
                 return None
                 # if result_prob.keys()[0] is "other":
                 # result_prob.keys()[0] = ut.chooseRandomly(self.rawdata_map[rawdata_type])
