@@ -26,19 +26,20 @@ def discreteSpecifiedRand(prob_dict_list):
     :param prob_dict_list:
     :return:
     '''
-    rand  = random.random()
+    rand     = random.random()
+    key_list = map(lambda x: x, prob_dict_list)
     # print 'rand is', rand
-    scale = prob_dict_list[0].values()[0]
+    scale = prob_dict_list[key_list[0]]
     index = 0
     #print('index=%s, len=%s, prob_dict_list=%s' % (index, len(prob_dict_list), prob_dict_list))
     while index <= len(prob_dict_list)-1:
         # print 'scale is', scale
         #print('index=%s, rand=%s, scale=%s' % (index, rand, scale))
         if rand <= scale:
-            return prob_dict_list[index].keys()[0]
+            return key_list[index]
         elif rand > scale:
             index += 1
-            scale += prob_dict_list[index].values()[0]
+            scale += prob_dict_list[key_list[index]]
 
 def chooseRandomly(choice_list):
     '''
@@ -59,14 +60,17 @@ def selectOtherRandomly(prob_dict_list, universal_set):
     _universal_set = list(universal_set)
     # delete the existed keys from universal set
     for item in prob_dict_list:
-        if item.keys()[0] != 'Others':
-            _universal_set.remove(item.keys()[0])
+        if item != 'Others':
+            _universal_set.remove(item)
     # delete the key 'Others', and replace it by a new key which generated randomly
-    index = 0
-    while index < len(prob_dict_list):
-        if prob_dict_list[index].keys()[0] == 'Others':
-            prob_dict_list[index][random.choice(_universal_set)] = prob_dict_list[index].pop('Others')
-        index += 1
+    # index = 0
+    # while index < len(prob_dict_list):
+    #     if prob_dict_list[index].keys()[0] == 'Others':
+    #         prob_dict_list[index][random.choice(_universal_set)] = prob_dict_list[index].pop('Others')
+    #     index += 1
+    for key in prob_dict_list:
+        if key == "Others":
+            prob_dict_list[random.choice(_universal_set)] = prob_dict_list.pop("Others")
     return prob_dict_list
 
 def getTracebackInfo():
