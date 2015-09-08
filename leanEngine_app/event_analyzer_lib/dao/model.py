@@ -1,6 +1,6 @@
 # coding: utf-8
 
-__all__ = ["getModel", "setModel", "getModelByTag"]
+__all__ = ["getModel", "setModel", "getModelByTag", "save_rnnrbm_params", "get_all_rnnrbm_params"]
 
 from leancloud import Object
 from leancloud import Query
@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger('logentries')
 Model = Object.extend("Model")
-
+Rnnrbm = Object.extend("Rnnrbm")
 # Store models in memory
 Model_In_Memory = {}
 
@@ -26,6 +26,91 @@ def getModel(algo_type, model_tag, event_type):
         "modelParam": model_param,
         "statusSets": status_sets
     }
+
+def save_rnnrbm_params(params_dict, base_set_dict, tag="random_v0" ):
+    '''
+
+    :param params_dict:
+    :param base_set_dict:
+    :param tag:
+    :return:
+    '''
+    #try:
+
+    def ndarray_to_list_in_dict(params_dict):
+
+        new_params_dict ={}
+        for key, params in params_dict.items():
+            new_params_dict.update({key:params.tolist()})
+        return new_params_dict
+
+
+    from datetime import datetime
+    trainedAt = datetime.now()
+    ids = []
+    for event, model_params in params_dict.items():
+        data_dict = dict(trainedAt=trainedAt,
+                     tag=tag,
+                     eventType=event,
+                     baseSetDict=base_set_dict,
+                     params=ndarray_to_list_in_dict(model_params))
+        obj_id = _set_rnnrbm_params(data_dict)
+        ids.append(obj_id)
+    return ids
+
+    #except Exception,e:
+        #print "Exception is",e
+
+    # def ndarray_to_list(params_dict):
+    #
+    #     list_dict = {}
+    #     for event,params in params_dict.items():
+    #         list_dict.update({event:params.tolist()})
+    #     return list_dict
+        #return e
+
+
+
+def _set_rnnrbm_params(params):
+
+    '''
+
+    :param params:
+     {"eventType":"dining_in_restaurant","tag":"latest","trainedAt":datetime.datetime.now(),"params":{"W":[],...}}
+    :return:
+    '''
+    model = Rnnrbm()
+    model.set(params)
+    model.save()
+    return model.id
+
+def get_all_rnnrbm_params(tag=None, event_list=None):
+
+    event_params_dict = {}
+    for event in event_list:
+        params_dict = _get_rnnrbm_params(eventType=event)
+        event_params_dict.update({event:params_dict["params"]})
+
+    return event_params_dict
+
+
+def _get_rnnrbm_params(**conditions):
+    '''
+
+    :param conditions:
+         {"eventType":"dining_in_restaurant","tag":"latest"}
+    :return:
+
+    '''
+    query = Query(Rnnrbm)
+    query.equal_to("eventType",conditions["eventType"])
+    #query.equal_to("note",conditions["note"])
+    #query.equal_to("tag","latest")
+    query.descending("trainedAt")
+    rnnrbm = query.first()
+    print "rnnrbm",rnnrbm
+    return dict(params=rnnrbm.get("params"))
+
 
 def setModel(algo_type, model_tag, event_type, model_param, status_sets, timestamp, description, last_train_data=''):
     model = Model()

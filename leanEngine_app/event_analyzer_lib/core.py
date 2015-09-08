@@ -7,6 +7,8 @@ import datetime
 import logging
 import json
 from algo import trainer, classifier
+from algo.rnnrbm import Comparator
+
 
 logger = logging.getLogger('logentries')
 
@@ -99,7 +101,7 @@ def trainEventRandomly(
     d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
                 location_type=location_set, event_prob_map=getEventProbMap())
     logger.debug('[trainEventRandomly] Dataset: %s' % (d))
-    d.randomObservations(event_type, train_obs_len, train_obs_count)
+    d.randomObservations(event_type, train_obs_len, train_obs_count)   # 这里是产生假序列的部分
     observations = d.obs
     logger.debug('[trainEventRandomly] obs: %s' % (observations))
 
@@ -111,6 +113,116 @@ def trainEventRandomly(
 
     return setModel(algo_type, target_tag, event_type, my_trainer.params_, status_sets,
                     datetime.datetime.now(), description, json.dumps(observations))
+
+def trainRandomRnnRBM():
+
+    #event_type = "dining_in_restaurant"
+    train_obs_len = 10  #todo need more than 10 or less than 10 length seqs
+    train_obs_count = 10
+    event_list = getEventList()
+    sound_set = get_sound_set()
+    motion_set = get_motion_set()
+
+    location_one_set = get_location_one_set()
+    location_two_set = get_location_two_set()
+    #the original location type is location_one_type
+    d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
+                location_type=location_two_set, location_one_type=location_one_set, event_prob_map=getEventProbMap())
+    #logger.debug('[trainEventRandomly] Dataset: %s' % (d))
+
+    print "dataset",d
+    event_dict = {}
+    for event_type in event_list: #
+        d.randomObservations(event_type, train_obs_len, train_obs_count)   # 这里是产生假序列的部分
+        observation_list = d.obs
+        binary_sequences = d.convert_binary_sequence(observation_list)
+        event_dict.update({event_type: binary_sequences})
+    #             (self,
+    #              event_params_dict=None, # key is the eventtype ,and the value is the params of RnnRbm,
+    #                                      #如果eventtype下有参数，则fit时，是从之前训练的基础上开始训练，如果是空。则是用buildrbmrnn的
+    #                                      #default参数来初始化并开始巡礼那
+    #              weights_dict=None,
+    #              seq_len = 0
+    #              ):
+    senz_len = len(sound_set) + len(motion_set) + len(location_one_set) + len(location_two_set)
+
+    # def cold_start_params_dict(event_list):
+    #     temp_dict = {}
+    #     for event in event_list: temp_dict.update({event:None})
+    #     return temp_dict
+
+    cmptor = Comparator(senz_len=senz_len,event_list=event_list)
+    params_dict = cmptor.fit(event_dict)
+    ids = save_rnnrbm_params(params_dict=params_dict,
+                             base_set_dict=dict(
+                                 motion=motion_set,
+                                 location_two=location_two_set,
+                                 location_one=location_one_set,
+                                 sound=sound_set
+                             ),
+                             tag="random_v0")
+    print "The ids saved  in leancloud are",ids
+    print "observations event dict start"
+    for i in event_dict:
+        print i
+    print "observation event dict end"
+    return ids
+
+
+def predictByRnnRbm(seq=None):
+
+    seq = [[
+               {
+                "location":"economy_hotel",
+                "motion":"unknown",
+                "location_one": "hotel",
+                "sound":"unknown",
+                #"tenMinScale":80,
+                #"timestamp":1438580199333
+                },
+                {
+                "location":"economy_hotel",
+                "motion":"unknown",
+                "location_one": "hotel",
+                "sound":"unknown",
+                #"tenMinScale":80,
+                #"timestamp":1438580199333
+                },
+                {
+                "location":"economy_hotel",
+                "motion":"unknown",
+                "location_one": "hotel",
+                "sound":"unknown",
+                #"tenMinScale":80,
+                #"timestamp":1438580199333
+                },
+                {
+                "location":"economy_hotel",
+                "motion":"unknown",
+                "location_one": "hotel",
+                "sound":"unknown",
+                #"tenMinScale":80,
+                #"timestamp":1438580199333
+                }
+    ]]
+
+    event_list = getEventList()
+    sound_set = get_sound_set()
+    motion_set = get_motion_set()
+
+    location_one_set = get_location_one_set()
+    location_two_set = get_location_two_set()
+    #the original location type is location_one_type
+    d = Dataset(event_type=getEventList(), motion_type=motion_set, sound_type=sound_set,
+                location_type=location_two_set, location_one_type=location_one_set, event_prob_map=getEventProbMap())
+    binary_sequences = d.convert_binary_sequence(seq)
+    event_params_dict = get_all_rnnrbm_params(tag=None,event_list=event_list)
+
+    cmptor = Comparator(event_params_dict=event_params_dict)
+    label = cmptor.predict(binary_sequences[0])
+    print label
+    return label
+
 
 def trainAll(source_tag, target_tag, obs_len, obs_count, algo_type):
     '''train randomly all
@@ -157,3 +269,10 @@ def predictEvent(seq, tag, algo_type, x_request_id=''):
     logger.info('<%s>, [predict event] end predict, seq=%s, predict_result=%s' %(x_request_id, seq, predict_result))
 
     return predict_result
+
+
+
+if __name__ == "__main__":
+
+
+    pass

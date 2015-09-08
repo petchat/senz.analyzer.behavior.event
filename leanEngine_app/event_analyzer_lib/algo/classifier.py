@@ -82,6 +82,7 @@ class BaseClassifier(object):
         pass
 
 
+
 class GMMHMMClassifier(BaseClassifier):
     '''A wrapper to a set of GMMHMMs for predict
 

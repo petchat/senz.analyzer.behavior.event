@@ -1,4 +1,4 @@
-__all__ = ["getSystemStatusSets", "getEventInfo", "getEventList", "getEventProbMap"]
+__all__ = ["getSystemStatusSets", "getEventInfo", "getEventList", "getEventProbMap","get_location_one_set","get_location_two_set","get_motion_set","get_sound_set"]
 
 from leancloud import Object
 from leancloud import Query
@@ -23,6 +23,30 @@ def _getConfigList():
 
 
 # Advanced Function
+
+
+def get_location_one_set():
+
+    location_one_dict = _getConfig(configList[2])
+    #todo checck isActive
+    return location_one_dict.keys()
+
+def get_location_two_set():
+
+    #todo checck isActive
+    location_two_dict = _getConfig(configList[3])
+    return location_two_dict.keys()
+
+def get_motion_set():
+    #todo checck isActive
+    motion_dict = _getConfig(configList[4])
+    return motion_dict.keys()
+
+def get_sound_set():
+    print configList[5]
+    sound_dict = _getConfig(configList[5])
+    return sound_dict.keys()
+
 
 def getSystemStatusSets():
     status = _getConfig(configList[0])
@@ -66,6 +90,8 @@ def getEventProbMap():
         if key in event_list:
             event_prob_map[key] = value
     #print('!!!!!!! result:%s' % (event_prob_map))
+    print "event_prob_map", event_prob_map
+
     check_valid_event_prob_map(event_prob_map)
     return event_prob_map
 
@@ -74,14 +100,16 @@ def check_valid_event_prob_map(event_prob_map):
 
     If unvalid, will raise ValueError
     '''
-    for event, cur_event_prob_map in event_prob_map.iteritems():
-        for key in ['motion', 'sound', 'location']:
-            cur_event_prob_dict = {}
-            for tmp_dict in cur_event_prob_map[key]:
-                cur_event_prob_dict.update(tmp_dict)
-            #print(cur_event_prob_dict)
-            if 1.0 != round(reduce(lambda x, y: x+y, cur_event_prob_dict.values())):
-                raise ValueError('event<%s> prob_map[%s] total_probs != 1\n details=%s'
-                                 % (event, key, cur_event_prob_map[key]))
+    # for event, cur_event_prob_map in event_prob_map.iteritems():
+    #     for key in ['motion', 'sound', 'location']:
+    #         cur_event_prob_dict = {}
+    #         print "cur_event_prob_map", cur_event_prob_map
+    #         for tmp_key,tmp_value in cur_event_prob_map[key].iteritems():
+    #             cur_event_prob_dict.update({tmp_key:tmp_value})
+    #         #print(cur_event_prob_dict)
+    #         print "values are",cur_event_prob_dict.values()
+    #         if 1.0 != round(reduce(lambda x, y: x+y, cur_event_prob_dict.values())):
+    #             raise ValueError('event<%s> prob_map[%s] total_probs != 1\n details=%s'
+    #                              % (event, key, cur_event_prob_map[key]))
 
     return True

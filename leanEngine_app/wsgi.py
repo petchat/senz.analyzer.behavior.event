@@ -21,6 +21,12 @@ application = engine
 
 if __name__ == '__main__':
     # Be runnable locally.
+
+    #here to test rnnrbm
+    from event_analyzer_lib.core import trainRandomRnnRBM,predictByRnnRbm
+    #trainRandomRnnRBM()
+    predictByRnnRbm()
+
     app.debug = True
     #server = simple_server.make_server('0.0.0.0', 9010, application)
     server = WSGIServer(('0.0.0.0', 9010), application)

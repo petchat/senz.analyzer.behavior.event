@@ -1,5 +1,6 @@
 import numpy as np
 import utils as ut
+import numpy as np
 
 
 # import matplotlib.pyplot as plt
@@ -28,7 +29,72 @@ class Dataset(object):
                   'living_room', 'supermarket', 'walk', 'bus_stop', 'classroom', 'subway', 'in_bus',
                   'study_quite_office', 'forrest', 'kitchen')
 
-    location_type = ("unknown","picking_garden","sports_venues","hospital","horsemanship","bath_sauna","drugstore","ticket_agent_bus","vegetarian_diet","talent_market","business_building","tennis_court","comprehensive_market","memorial_hall","public_phone","stationer","high_school","insurance_company","home","resort","race_course","digital_store","cigarette_store","housekeeping_water_deliver","pawnshop","auto_sale","japan_korea_restaurant","toll_station","salvage_station","newstand","minor_institutions","western_restaurant","car_maintenance","scenic_spot","barbershop","holiday_village","chafing_dish","buffet","convenience_store","odeum","telecom_offices_unicom","pet_service","housekeeping_nanny","traffic","football_field","ticket_agent_plane","cinema","coffee","auto_repair","zoo","apartment_hotel","coach_station","bar","hostel","video_store","game_room","laundry","housekeeping_alliance_repair","photographic_studio","ktv","railway_station","motorcycle_sell","basketball_court","industrial_area","community_center","telecom_offices_netcom","exhibition_hall","ticket_agent_coach","bank","night_club","ticket_agent_train","government_agency","bike_store","foreign_institutional","furniture_store","travel_agency","technical_school","welfare_house","intermediary","security_company","shopping_street","movie","gift_store","refuge","motorcycle_service","korea_restaurant","lottery_station","science_museum","housekeeping_lock","sports_store","gas_station","university","primary_school","outdoor","playground","motorcycle","city_square","electricity_office","library","convention_center","kinder_garten","ticket_agent","snack_bar","hotel","cosmetics_store","adult_education","farm_house","factory","telecom_offices","pet_market","cultural_venues","housekeeping_house_moving","cultural_palace","housekeeping","antique_store","work_office","gallery","bbq","telecom_offices_mobile","water_supply_office","fishing_garden","other_infrastructure","residence","chess_room","dormitory","clinic","telecom_offices_telecom","airport","villa","seafood_restaurant","inn","internet_bar","commodity_market","special_hospital","muslim_dish","guest_house","clothing_store","farmers_market","bus_stop","church","botanic_garden","theater","skiing","traffic_place","tax_authorities","flea_market","jewelry_store","subway","training_institutions","post_office","music_hall","mother_store","supermarket","highway_service_area","japan_restaurant","agriculture_forestry_and_fishing_base","scientific_research_institution","economy_hotel","glass_store","golf","public_utilities","public_toilet","park","dessert","emergency_center","housekeeping_hour","driving_school","car_wash","subway_track","parking_plot","temple","chinese_restaurant","other_hotel","motorcycle_repair","atm","aquarium","cooler_store","bus_route","museum","telecom_offices_tietong","bathing_beach")
+    location_type = ['travel_agency', 'ticket_agent', 'ticket_agent_plane', 'ticket_agent_train', 'post_office', 'telecom_offices', 'telecom_offices_unicom', 'telecom_offices_netcom', 'newstand', 'water_supply_office', 'electricity_office', 'photographic_studio', 'laundry', 'talent_market', 'lottery_station', 'housekeeping', 'housekeeping_lock', 'housekeeping_hour', 'housekeeping_water_deliver', 'intermediary', 'pet_service', 'salvage_station', 'welfare_house', 'barbershop', 'laundry', 'ticket_agent_coach', 'housekeeping_nanny', 'housekeeping_house_moving', 'telecom_offices_tietong', 'ticket_agent_bus', 'telecom_offices_mobile', 'housekeeping_alliance_repair', 'telecom_offices_telecom', 'public_utilities', 'toll_station', 'other_infrastructure', 'public_phone', 'factory', 'city_square', 'refuge', 'public_toilet', 'church', 'industrial_area', 'comprehensive_market', 'convenience_store', 'supermarket', 'digital_store', 'pet_market', 'furniture_store', 'farmers_market', 'commodity_market', 'flea_market', 'sports_store', 'clothing_store', 'video_store', 'glass_store', 'mother_store', 'jewelry_store', 'cosmetics_store', 'gift_store', 'pawnshop', 'antique_store', 'bike_store', 'cigarette_store', 'stationer', 'motorcycle_sell', 'sports_store', 'shopping_street', 'bank', 'atm', 'insurance_company', 'security_company', 'residence', 'business_building', 'community_center', 'bath_sauna', 'ktv', 'bar', 'coffee', 'night_club', 'cinema', 'odeum', 'resort', 'outdoor', 'game_room', 'internet_bar', 'botanic_garden', 'music_hall', 'movie', 'playground', 'temple', 'aquarium', 'cultural_venues', 'fishing_garden', 'picking_garden', 'cultural_palace', 'memorial_hall', 'park', 'zoo', 'chess_room', 'bathing_beach', 'theater', 'scenic_spot', 'agriculture_forestry_and_fishing_base', 'foreign_institutional', 'government_agency', 'minor_institutions', 'tax_authorities', 'motel', 'hotel', 'economy_hotel', 'guest_house', 'hostel', 'farm_house', 'villa', 'dormitory', 'other_hotel', 'apartment_hotel', 'inn', 'holiday_village', 'gas_station', 'parking_plot', 'auto_sale', 'auto_repair', 'motorcycle', 'car_maintenance', 'car_wash', 'motorcycle_service', 'motorcycle_repair', 'golf', 'skiing', 'sports_venues', 'football_field', 'tennis_court', 'horsemanship', 'race_course', 'basketball_court', 'chinese_restaurant', 'japan_korea_restaurant', 'japan_restaurant', 'korea_restaurant', 'western_restaurant', 'bbq', 'chafing_dish', 'seafood_restaurant', 'vegetarian_diet', 'muslim_dish', 'buffet', 'dessert', 'cooler_store', 'snack_bar', 'vegetarian_diet', 'traffic', 'bus_stop', 'subway', 'highway_service_area', 'railway_station', 'airport', 'coach_station', 'traffic_place', 'bus_route', 'subway_track', 'museum', 'exhibition_hall', 'science_museum', 'library', 'gallery', 'convention_center', 'hospital', 'clinic', 'emergency_center', 'drugstore', 'special_hospital', 'home', 'university', 'high_school', 'primary_school', 'kinder_garten', 'training_institutions', 'technical_school', 'adult_education', 'scientific_research_institution', 'driving_school', 'work_office']
+
+    location_one_type = None
+
+    location_map  = {
+    'dining': [
+        'chinese_restaurant', 'japan_korea_restaurant','japan_restaurant','korea_restaurant', 'western_restaurant', 'bbq', 'chafing_dish', 'seafood_restaurant',
+        'vegetarian_diet', 'muslim_dish', 'buffet', 'dessert', 'cooler_store', 'snack_bar','vegetarian_diet'
+    ],
+    'shopping': [
+        'comprehensive_market', 'convenience_store', 'supermarket', 'digital_store', 'pet_market', 'furniture_store',
+        'farmers_market', 'commodity_market', 'flea_market', 'sports_store', 'clothing_store', 'video_store',
+        'glass_store', 'mother_store', 'jewelry_store', 'cosmetics_store', 'gift_store',
+        'pawnshop', 'antique_store', 'bike_store', 'cigarette_store', 'stationer','motorcycle_sell','sports_store','shopping_street'
+    ],
+    'life_service': [
+        'travel_agency', 'ticket_agent','ticket_agent_plane', 'ticket_agent_train','post_office', 'telecom_offices' ,'telecom_offices_unicom', 'telecom_offices_netcom','newstand', 'water_supply_office',
+        'electricity_office', 'photographic_studio', 'laundry', 'talent_market', 'lottery_station', 'housekeeping','housekeeping_lock','housekeeping_hour','housekeeping_water_deliver',
+        'intermediary', 'pet_service', 'salvage_station', 'welfare_house', 'barbershop','laundry','ticket_agent_coach','housekeeping_nanny','housekeeping_house_moving',
+        'telecom_offices_tietong','ticket_agent_bus','telecom_offices_mobile','housekeeping_alliance_repair','telecom_offices_telecom'
+    ],
+    'entertainment': [
+        'bath_sauna', 'ktv', 'bar', 'coffee', 'night_club', 'cinema', 'odeum', 'resort', 'outdoor', 'game_room',
+        'internet_bar','botanic_garden','music_hall','movie','playground','temple','aquarium','cultural_venues','fishing_garden','picking_garden','cultural_palace',
+        'memorial_hall','park','zoo','chess_room','bathing_beach','theater'
+    ],
+    'sports':[
+      'golf','skiing','sports_venues','football_field','tennis_court','horsemanship','race_course','basketball_court'
+    ],
+    'auto_related': [
+        'gas_station', 'parking_plot', 'auto_sale', 'auto_repair', 'motorcycle', 'car_maintenance', 'car_wash','motorcycle_service','motorcycle_repair'
+    ],
+    'healthcare': [
+        'hospital', 'clinic', 'emergency_center', 'drugstore','special_hospital'
+    ],
+    'hotel': [
+        'motel', 'hotel', 'economy_hotel', 'guest_house', 'hostel','farm_house','villa','dormitory','other_hotel','apartment_hotel','inn','holiday_village'
+    ],
+    'scenic_spot': ['scenic_spot'
+                    ],
+    'exhibition': [
+        'museum', 'exhibition_hall', 'science_museum', 'library', 'gallery', 'convention_center',
+    ],
+    'education': [
+        'university', 'high_school', 'primary_school', 'kinder_garten', 'training_institutions', 'technical_school',
+        'adult_education','scientific_research_institution','driving_school'
+    ],
+    'finance': [
+        'bank', 'atm', 'insurance_company', 'security_company'
+    ],
+    'infrastructure': [
+        'public_utilities', 'toll_station', 'other_infrastructure','public_phone','factory' ,'city_square','refuge','public_toilet','church','industrial_area'
+    ],
+    'traffic':[
+      'traffic','bus_stop','subway','highway_service_area','railway_station','airport','coach_station','traffic_place','bus_route','subway_track'
+    ],
+    'government':[
+        'agriculture_forestry_and_fishing_base','foreign_institutional','government_agency','minor_institutions','tax_authorities'
+    ],
+    'estate': [
+        'residence', 'business_building','community_center'
+    ],
+    'home': ['home'],
+    'work_office': ['work_office'],
+}
+
 
     rawdata_map = {
         "motion": motion_type,
@@ -340,9 +406,20 @@ class Dataset(object):
             self.event_type, self.motion_type, self.sound_type, self.location_type, self.event_prob_map
         )
 
-    def __init__(self, obs=None, rawdata_type=None, event_type=None, motion_type=None, sound_type=None,
-                 location_type=None, event_prob_map=None):
+    def __init__(self,
+                 obs=None,
+                 rawdata_type=None,
+                 event_type=None,
+                 motion_type=None,
+                 sound_type=None,
+                 location_type=None,
+                 location_one_type=None,
+                 event_prob_map=None,
+                 binary_obs=[]):
+
         self.obs = obs
+        self.binary_obs=  binary_obs
+
         if rawdata_type is not None:
             self.rawdata_type = rawdata_type
         if event_type is not None:
@@ -353,14 +430,74 @@ class Dataset(object):
             self.sound_type = sound_type
         if location_type is not None:
             self.location_type = location_type
+        if location_one_type is not None:
+            self.location_one_type = location_one_type
         if event_prob_map is not None:
             self.event_prob_map = event_prob_map
+
+        if self.location_one_type != None:
+            self.binary_senz_length = len(self.location_one_type)\
+                                      + len(self.location_type)\
+                                      + len(self.motion_type)\
+                                      + len(self.sound_type)
 
         self.rawdata_map = {
             "motion": self.motion_type,
             "sound": self.sound_type,
             "location": self.location_type
         }
+
+    def _find_location_one(self, location_type_two):
+        # this is inefficient, but this is training process,so we can omit this timedealy
+        for key,values in self.location_map.items():
+            if location_type_two in values:
+                return key
+        return None
+
+    def convert_binary_sequence(self,obs):
+
+        def senz_2_index(senz):
+
+            assert self.location_one_type != None , \
+                "RNNRBM algo must set the right location_one set,but now location_one_type is none"
+
+            return [
+                self.motion_type.index(senz["motion"]),
+                self.location_type.index(senz["location"]),
+                self.location_one_type.index(senz["location_one"]),
+                self.sound_type.index(senz["sound"])
+
+            ]
+
+        def index_2_binary(indexs):
+
+            '''
+
+            :param indexs:
+            :return:  binary order is [motion, location, location_two,sound]
+            '''
+            motions_zeros = np.zeros(len(self.motion_type))
+            motions_zeros[indexs[0]] = 1
+            location_zeros = np.zeros(len(self.location_type))
+            location_zeros[indexs[1]] = 1
+            location_one_zeros = np.zeros(len(self.location_one_type))
+            location_one_zeros[indexs[2]] = 1
+            sound_zeros = np.zeros(len(self.sound_type))
+            sound_zeros[indexs[3]] = 1
+
+            binary_seq = np.hstack([motions_zeros,location_zeros,location_one_zeros,sound_zeros])
+            #print "binary_seq",binary_seq
+            #print "ndim",binary_seq.shape
+            return  binary_seq
+
+
+        for seq in obs:
+            index_seq = map(senz_2_index,seq)
+            binary_seq = map(index_2_binary, index_seq)
+            self.binary_obs.append(binary_seq)
+
+        return np.array(self.binary_obs)
+
 
     def _convertNumericalObservation(self, obs):
         """
@@ -483,7 +620,8 @@ class Dataset(object):
             new_location_prob_map = {"Others": self.event_prob_map[event]["location"]["visit_freq"]}
             new_location_prob_map[the_place] = 0.8
             senz["location"] = self._generateRawdataRandomly("location", new_location_prob_map)
-
+            if self.location_one_type != None:
+                senz["location_one"] = self._find_location_one(senz["location"])
             seq.append(senz)
             times += 1
         # self.seq = seq

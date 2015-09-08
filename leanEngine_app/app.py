@@ -494,3 +494,6 @@ def is_alive():
                                                                        request.remote_user))
     result = {'code': 0, 'message': 'Alive'}
     return json.dumps(result)
+
+
+

@@ -8,3 +8,4 @@ logentries
 bugsnag
 hmmlearn
 gevent
+Theano

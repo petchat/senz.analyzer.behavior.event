@@ -95,6 +95,12 @@ class BaseTrainer(object):
         pass
 
 
+class RNNRBMTrainer(BaseTrainer):
+    '''
+    use the rnnrbm.py tra
+    '''
+
+
 class GMMHMMTrainer(BaseTrainer):
     '''A wrapper to GMMHMM
 
